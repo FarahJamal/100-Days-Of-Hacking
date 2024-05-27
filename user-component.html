@@ -2,475 +2,1239 @@
 
 <p-toast position="top-left" *ngIf="applicationLang == 'ar'"></p-toast>
 
-<app-loader-skeleton *ngIf="!showForm" [skeletonType]="loaderType"></app-loader-skeleton>
+<app-loader-skeleton
+  *ngIf="!showForm"
+  [skeletonType]="loaderType"
+></app-loader-skeleton>
 
 <p-blockUI [blocked]="showSaveRequestLoader || spinner || fileUploadSpinner">
-    <p-progressSpinner strokeWidth="4" aria-label="Loading"></p-progressSpinner>
-    <!-- <i class="pi pi-lock" style="font-size: 3rem"></i> -->
+  <p-progressSpinner strokeWidth="4" aria-label="Loading"></p-progressSpinner>
+  <!-- <i class="pi pi-lock" style="font-size: 3rem"></i> -->
 </p-blockUI>
 
 <ng-container *ngIf="showForm">
+  <div class="content-wrapper mt-na15">
+    <!-- Main content -->
+    <div class="container-fluid itg-plr">
+      <div class="row">
+        <div class="col-lg-12 col-sm-12">
+          <div class="dashboardContent">
+            <div class="mainBoxes"></div>
 
-    <div class="content-wrapper mt-na15">
-        <!-- Main content -->
-        <div class="container-fluid itg-plr">
-            <div class="row">
+            <!---main content box -->
 
-
-                <div class="col-lg-12 col-sm-12">
-
-
-                    <div class="dashboardContent">
-
-                        <div class="mainBoxes">
-
+            <div class="row no-gutters">
+              <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                <div class="cardBox itgreqtype">
+                  <div class="row no-gutters">
+                    <div class="row">
+                      <div class="col-xxl-6 col-md-6">
+                        <div class="itm-page-title">
+                          <h5>
+                            {{applicationLang == 'en' ? requestFormData?.nameEn
+                            : requestFormData?.nameAr }}
+                          </h5>
+                          <p>
+                            {{applicationLang == 'en' ?
+                            requestFormData?.descriptionEn :
+                            requestFormData?.descriptionAr }}
+                            <!-- <a href="#"><img src="../../../../assets/images/login/new-staff-q.svg" /></a> -->
+                          </p>
                         </div>
+                      </div>
 
-                        <!---main content box -->
+                      <div class="col-xxl-6 col-md-6">
+                        <button
+                          (click)="showRequestHistory = true"
+                          class="btn btn-secondary rounded-0 pull-right"
+                          type="button"
+                        >
+                          {{'prev_reqs' | translate}}
+                          ({{requestHistory.length}})
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xxl-6 col-md-12">
+                        <div class="row">
+                          <ng-container
+                            *ngFor="let step of requestFormData?.serviceSteps; let ind = index"
+                          >
+                            <div
+                              class="col-xxl-4 col-lg-3 col-md-6 col-6 itm-line-height"
+                            >
+                              <p
+                                [class.itm-text-warning]="ind == activeStepIndex"
+                                [class.itm-text-success]="ind < activeStepIndex"
+                              >
+                                {{ind+1}}. {{applicationLang == 'en' ?
+                                step.nameEn : step.nameAr}}
+                              </p>
+                              <div class="progress-bar-container">
+                                <div
+                                  class="progress-bar-child progress rounded-0"
+                                  [class.itm-bg-warning]="ind == activeStepIndex"
+                                  [class.itm-bg-success]="ind < activeStepIndex"
+                                ></div>
+                                <div
+                                  class="progress-bar-child shrinker timelapse"
+                                ></div>
+                              </div>
+                            </div>
+                          </ng-container>
+                        </div>
+                      </div>
+                    </div>
 
-                        <div class="row no-gutters">
+                    <div class="row mt-3">
+                      <div class="col-xxl-12 col-md-12">
+                        <div class="itm-caution" *ngIf="isFormInvalid">
+                          <p>{{'form_error_txt' | translate}}:</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xxl-12 col-md-12">
+                        <div class="text-bg-secondary p-3">
+                          {{ applicationLang == 'en' ?
+                          requestFormData?.serviceSteps[activeStepIndex]?.nameEn
+                          :
+                          requestFormData?.serviceSteps[activeStepIndex]?.nameAr
+                          }}
 
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-12">
-                                <div class="cardBox itgreqtype">
+                          <div
+                            *ngIf="employeeDataSpinner"
+                            class="spinner-grow text-light"
+                            role="status"
+                            style="height: 15px; width: 15px"
+                          >
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
 
-                                    <div class="row no-gutters">
-
-                                        <div class="row ">
-                                            <div class="col-xxl-6 col-md-6">
-
-                                                <div class="itm-page-title ">
-                                                    <h5>{{applicationLang == 'en' ? requestFormData?.nameEn :
-                                                        requestFormData?.nameAr }}</h5>
-                                                    <p>{{applicationLang == 'en' ? requestFormData?.descriptionEn :
-                                                        requestFormData?.descriptionAr
-                                                        }}
-                                                        <!-- <a href="#"><img src="../../../../assets/images/login/new-staff-q.svg" /></a> -->
-                                                    </p>
-
-                                                </div>
-                                            </div>
-
-                                            <div class="col-xxl-6 col-md-6">
-                                                <button (click)="showRequestHistory = true"
-                                                    class="btn btn-secondary rounded-0 pull-right"
-                                                    type="button">{{'prev_reqs' | translate}}
-                                                    ({{requestHistory.length}})
-                                                </button>
-                                            </div>
-
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-xxl-6 col-md-12">
-                                                <div class="row">
-                                                    <ng-container
-                                                        *ngFor="let step of requestFormData?.serviceSteps; let ind = index">
-                                                        <div class="col-xxl-4 col-lg-3 col-md-6 col-6  itm-line-height">
-
-
-                                                            <p [class.itm-text-warning]="ind == activeStepIndex"
-                                                                [class.itm-text-success]="ind < activeStepIndex">
-                                                                {{ind+1}}. {{applicationLang ==
-                                                                'en' ?
-                                                                step.nameEn : step.nameAr}}</p>
-                                                            <div class="progress-bar-container">
-                                                                <div class="progress-bar-child progress rounded-0"
-                                                                    [class.itm-bg-warning]="ind == activeStepIndex"
-                                                                    [class.itm-bg-success]="ind < activeStepIndex">
-                                                                </div>
-                                                                <div class="progress-bar-child shrinker timelapse">
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-
-                                                    </ng-container>
-
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="row mt-3">
-                                            <div class="col-xxl-12 col-md-12">
-
-                                                <div class="itm-caution" *ngIf="isFormInvalid">
-
-                                                    <p>{{'form_error_txt' | translate}}:</p>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-xxl-12 col-md-12">
-
-                                                <div class="text-bg-secondary p-3 ">
-                                                    {{ applicationLang == 'en' ?
-                                                    requestFormData?.serviceSteps[activeStepIndex]?.nameEn :
-                                                    requestFormData?.serviceSteps[activeStepIndex]?.nameAr
-                                                    }}
-
-                                                    <div *ngIf="employeeDataSpinner" class="spinner-grow text-light"
-                                                        role="status" style="height: 15px; width: 15px;">
-                                                        <span class="visually-hidden">Loading...</span>
-                                                    </div>
-
-                                                    <!-- <button *ngIf="activeStepIndex == 0  && showMyTeamBtn" pButton pRipple type="button"
+                          <!-- <button *ngIf="activeStepIndex == 0  && showMyTeamBtn" pButton pRipple type="button"
                                                             (click)="showMyTeamBar = true" [label]="'my_team' | translate "
                                                             class="my-team-btn p-button-raised p-button-secondary p-button-text ar-float"></button>
                                     
                                                         <app-employee-team *ngIf="activeStepIndex == 0" (showMyTeamBtn)="showMyTeamBtn = true"
                                                             [showMyTeamBar]="showMyTeamBar" (sideBarClose)="showMyTeamBar = false"
                                                             (selectedEmployee)="onEmployeeSelection($event)"></app-employee-team> -->
+                        </div>
 
-                                                </div>
+                        <div
+                          class="heading-review"
+                          *ngIf="activeStepIndex == (serviceSteps!.length - 1)"
+                        >
+                          <h3>{{'req_review_heading' | translate}}:</h3>
+                        </div>
+                      </div>
+                    </div>
 
-                                                <div class="heading-review"
-                                                    *ngIf="activeStepIndex == (serviceSteps!.length - 1)">
-                                                    <h3>{{'req_review_heading' | translate}}:</h3>
-                                                </div>
+                    <!-- dynamic fields section starts  -->
+                    <form class="form-design" [formGroup]="requestForm">
+                      <div class="row mt-3">
+                        <ng-container
+                          *ngFor="let field of requestFormData?.serviceSteps[activeStepIndex]?.stepFields"
+                        >
+                          <ng-container
+                            *ngIf="!field?.hasCondition"
+                            [ngSwitch]="field?.controlType"
+                          >
+                            <ng-container *ngSwitchCase="'text'">
+                              <div
+                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
+                              >
+                                <label [for]="field.key" class="form-label">
+                                  <span class="invalid-txt"
+                                    >{{field.isRequired ? '*' : ''}}</span
+                                  >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}
+                                </label>
 
-                                            </div>
+                                <input
+                                  type="text"
+                                  [formControlName]="field.key"
+                                  [placeholder]="field.labelEn"
+                                  [pattern]="field.regex"
+                                  (keyup)="onTextInputChange($event, field)"
+                                  [id]="field.key"
+                                  class="form-control"
+                                  [readonly]="field.isReadonly"
+                                  [class.disabled-field]="field.isReadonly"
+                                />
+                                <button
+                                  (click)="getEmployeeInfo()"
+                                  type="button"
+                                  class="btn btn-secondary hitgformsearch"
+                                  *ngIf="field.key == 'employeeNumber'"
+                                >
+                                  <i class="fa fa-search"></i>
+                                </button>
+                                <small
+                                  class="invalid-txt"
+                                  *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]"
+                                >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}} {{'mandatory_txt' |
+                                  translate}}
+                                </small>
+                                <small
+                                  class="invalid-txt"
+                                  *ngIf="field.regex && isFormInvalid && this.requestForm.controls[field.key.toString()]?.errors?.pattern"
+                                >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}} should be a valid input
+                                </small>
+                              </div>
+                            </ng-container>
 
-                                        </div>
+                            <ng-container *ngSwitchCase="'number'">
+                              <div
+                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
+                              >
+                                <label [for]="field.key" class="form-label">
+                                  <span class="invalid-txt"
+                                    >{{field.isRequired ? '*' : ''}}</span
+                                  >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}
+                                </label>
+                                <input
+                                  type="number"
+                                  [formControlName]="field.key"
+                                  [placeholder]="field.labelEn"
+                                  [id]="field.key"
+                                  class="form-control"
+                                  [readonly]="field.isReadonly"
+                                  [class.disabled-field]="field.isReadonly"
+                                />
+                                <small
+                                  class="invalid-txt"
+                                  *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]"
+                                >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}} {{'mandatory_txt' |
+                                  translate}}
+                                </small>
+                              </div>
+                            </ng-container>
 
-                                        <!-- dynamic fields section starts  -->
-                                        <form class="form-design" [formGroup]="requestForm">
-                                            <div class="row mt-3">
+                            <ng-container *ngSwitchCase="'password'">
+                              <div
+                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
+                              >
+                                <label [for]="field.key" class="form-label">
+                                  <span class="invalid-txt"
+                                    >{{field.isRequired ? '*' : ''}}</span
+                                  >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}
+                                </label>
+                                <input
+                                  type="password"
+                                  [formControlName]="field.key"
+                                  [placeholder]="field.labelEn"
+                                  [class.disabled-field]="field.isReadonly"
+                                  [id]="field.labelEn"
+                                  class="form-control"
+                                  [readonly]="field.isReadonly"
+                                />
+                                <small
+                                  class="invalid-txt"
+                                  *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]"
+                                >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}} {{'mandatory_txt' |
+                                  translate}}
+                                </small>
+                              </div>
+                            </ng-container>
 
-                                                <ng-container
-                                                    *ngFor="let field of requestFormData?.serviceSteps[activeStepIndex]?.stepFields">
-                                                    <ng-container *ngIf="!field?.hasCondition"
-                                                        [ngSwitch]="field?.controlType">
-                                                        <ng-container *ngSwitchCase="'text'">
-                                                            <div
-                                                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4">
-                                                                <label [for]="field.key" class="form-label">
-                                                                    <span class="invalid-txt">{{field.isRequired ? '*' :
-                                                                        ''}}</span>
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}}
-                                                                </label>
+                            <ng-container *ngSwitchCase="'textarea'">
+                              <div
+                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
+                              >
+                                <label [for]="field.key" class="form-label">
+                                  <span class="invalid-txt"
+                                    >{{field.isRequired ? '*' : ''}}</span
+                                  >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}
+                                </label>
+                                <textarea
+                                  [formControlName]="field.key"
+                                  [placeholder]="field.labelEn"
+                                  [readonly]="field.isReadonly"
+                                  class="form-control rounded-0"
+                                  [class.disabled-field]="field.isReadonly"
+                                  [rows]="field.textAreaRows"
+                                ></textarea>
+                                <small
+                                  class="invalid-txt"
+                                  *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]"
+                                >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}} {{'mandatory_txt' |
+                                  translate}}
+                                </small>
+                              </div>
+                            </ng-container>
 
-                                                                <input type="text" [formControlName]="field.key"
-                                                                    [placeholder]="field.labelEn"
-                                                                    [pattern]="field.regex"
-                                                                    (keyup)="onTextInputChange($event, field)"
-                                                                    [id]="field.key" class="form-control"
-                                                                    [readonly]="field.isReadonly"
-                                                                    [class.disabled-field]="field.isReadonly">
-                                                                <button (click)="getEmployeeInfo()" type="button"
-                                                                    class="btn btn-secondary hitgformsearch"
-                                                                    *ngIf="field.key == 'employeeNumber'"><i
-                                                                        class="fa fa-search"></i></button>
-                                                                <small class="invalid-txt"
-                                                                    *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]">
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}} {{'mandatory_txt' |
-                                                                    translate}}
-                                                                </small>
-                                                                <small class="invalid-txt"
-                                                                    *ngIf="field.regex && isFormInvalid && this.requestForm.controls[field.key.toString()]?.errors?.pattern">
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}} should be a valid
-                                                                    input
-                                                                </small>
-                                                            </div>
+                            <ng-container *ngSwitchCase="'radiobutton'">
+                              <div
+                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
+                              >
+                                <label [for]="field.key" class="form-label">
+                                  <span class="invalid-txt"
+                                    >{{field.isRequired ? '*' : ''}}</span
+                                  >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}
+                                </label>
+                                <div
+                                  class="p-field-radiobutton"
+                                  *ngFor="let child of field.options"
+                                >
+                                  <p-radioButton
+                                    [inputId]="field.key + child.nameEn"
+                                    [name]="field.key"
+                                    [value]="child.id"
+                                    [formControlName]="field.key"
+                                    (onClick)="onLookUpChange($event, field)"
+                                  >
+                                  </p-radioButton>
+                                  <label [for]="field.key + child.nameEn"
+                                    >{{applicationLang == 'en' ? child.nameEn :
+                                    child.nameAr}}</label
+                                  >
+                                </div>
+                                <small
+                                  class="invalid-txt"
+                                  *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]"
+                                >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}} {{'mandatory_txt' |
+                                  translate}}
+                                </small>
+                              </div>
+                            </ng-container>
 
-                                                        </ng-container>
+                            <ng-container *ngSwitchCase="'dropdown'">
+                              <div
+                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
+                              >
+                                <span class="invalid-txt"
+                                  >{{field.isRequired ? '*' : ''}}</span
+                                >
+                                <label [for]="field.key" class="form-label">
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}</label
+                                >
+                                <br />
+                                <p-dropdown
+                                  appendTo="body"
+                                  [id]="field.key"
+                                  [readonly]="field.isReadonly"
+                                  [class.disabled-field]="field.isReadonly"
+                                  [placeholder]="field.placeholder ? field.placeholder : '--select--'"
+                                  [options]="field.options"
+                                  optionLabel="{{applicationLang == 'en' ? 'nameEn' : 'nameAr'}}"
+                                  optionValue="id"
+                                  [formControlName]="field.key"
+                                  (onChange)="onLookUpChange($event, field)"
+                                  [filter]="true"
+                                  filterBy="{{applicationLang == 'en' ? 'nameEn' : 'nameAr'}}"
+                                  [virtualScroll]="currentServiceId == 34 ? true : false"
+                                  [virtualScrollItemSize]="50"
+                                >
+                                </p-dropdown>
+                                <small
+                                  class="invalid-txt"
+                                  *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]"
+                                >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}} {{'mandatory_txt' |
+                                  translate}}
+                                </small>
+                              </div>
+                            </ng-container>
 
-                                                        <ng-container *ngSwitchCase="'number'">
-                                                            <div
-                                                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4">
-                                                                <label [for]="field.key" class="form-label">
-                                                                    <span class="invalid-txt">{{field.isRequired ? '*' :
-                                                                        ''}}</span>
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}}
-                                                                </label>
-                                                                <input type="number" [formControlName]="field.key"
-                                                                    [placeholder]="field.labelEn" [id]="field.key"
-                                                                    class="form-control" [readonly]="field.isReadonly"
-                                                                    [class.disabled-field]="field.isReadonly">
-                                                                <small class="invalid-txt"
-                                                                    *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]">
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}} {{'mandatory_txt' |
-                                                                    translate}}
-                                                                </small>
-                                                            </div>
+                            <ng-container *ngSwitchCase="'checkbox'">
+                              <div
+                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
+                              >
+                                <span class="invalid-txt"
+                                  >{{field.isRequired ? '*' : ''}}</span
+                                >
+                                <label [for]="field.key" class="form-label">
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}</label
+                                >
+                                <br />
 
-                                                        </ng-container>
+                                <div
+                                  class="field-checkbox dynamic-form-checbox"
+                                  *ngIf="currentServiceId != 34"
+                                >
+                                  <p-checkbox
+                                    *ngFor="let option of field.options"
+                                    [name]="field.key"
+                                    [value]="option.id"
+                                    [label]="option.nameEn"
+                                    [(ngModel)]="checkedValues"
+                                    [formControlName]="field.key"
+                                  >
+                                  </p-checkbox>
+                                </div>
 
-                                                        <ng-container *ngSwitchCase="'password'">
-                                                            <div
-                                                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4">
-                                                                <label [for]="field.key" class="form-label">
-                                                                    <span class="invalid-txt">{{field.isRequired ? '*' :
-                                                                        ''}}</span>
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}}
-                                                                </label>
-                                                                <input type="password" [formControlName]="field.key"
-                                                                    [placeholder]="field.labelEn"
-                                                                    [class.disabled-field]="field.isReadonly"
-                                                                    [id]="field.labelEn" class="form-control"
-                                                                    [readonly]="field.isReadonly">
-                                                                <small class="invalid-txt"
-                                                                    *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]">
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}} {{'mandatory_txt' |
-                                                                    translate}}
-                                                                </small>
-                                                            </div>
+                                <div
+                                  class="field-checkbox dynamic-form-checbox"
+                                  *ngIf="currentServiceId == 34"
+                                >
+                                  <p-checkbox
+                                    *ngFor="let option of field.options"
+                                    [name]="field.key"
+                                    [value]="option.id"
+                                    [label]="option.nameEn"
+                                    [(ngModel)]="checkedValues"
+                                    [formControlName]="field.key"
+                                  >
+                                  </p-checkbox>
+                                  <small
+                                    *ngIf="!field.options || field.options.length == 0"
+                                  >
+                                    {{groupMembersMsg}}
+                                  </small>
+                                </div>
 
-                                                        </ng-container>
+                                <small
+                                  class="invalid-txt"
+                                  *ngIf="field.isRequired && isFormInvalid && 
+                                                                        (!requestForm?.value[field.key.toString()] || requestForm?.value[field.key.toString()]?.length == 0  )"
+                                >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}} {{'mandatory_txt' |
+                                  translate}}
+                                </small>
+                              </div>
+                            </ng-container>
 
-                                                        <ng-container *ngSwitchCase="'textarea'">
-
-                                                            <div
-                                                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4">
-                                                                <label [for]="field.key" class="form-label">
-                                                                    <span class="invalid-txt">{{field.isRequired ? '*' :
-                                                                        ''}}</span>
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}}
-                                                                </label>
-                                                                <textarea [formControlName]="field.key"
-                                                                    [placeholder]="field.labelEn"
-                                                                    [readonly]="field.isReadonly"
-                                                                    class="form-control rounded-0"
-                                                                    [class.disabled-field]="field.isReadonly"
-                                                                    [rows]="field.textAreaRows"></textarea>
-                                                                <small class="invalid-txt"
-                                                                    *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]">
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}} {{'mandatory_txt' |
-                                                                    translate}}
-                                                                </small>
-                                                            </div>
-
-                                                        </ng-container>
-
-                                                        <ng-container *ngSwitchCase="'radiobutton'">
-
-                                                            <div
-                                                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4">
-                                                                <label [for]="field.key" class="form-label">
-                                                                    <span class="invalid-txt">{{field.isRequired ? '*' :
-                                                                        ''}}</span>
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}}
-                                                                </label>
-                                                                <div class="p-field-radiobutton"
-                                                                    *ngFor="let child of field.options">
-                                                                    <p-radioButton [inputId]="field.key + child.nameEn"
-                                                                        [name]="field.key" [value]="child.id"
-                                                                        [formControlName]="field.key"
-                                                                        (onClick)="onLookUpChange($event, field)">
-                                                                    </p-radioButton>
-                                                                    <label
-                                                                        [for]="field.key + child.nameEn">{{applicationLang
-                                                                        == 'en' ? child.nameEn
-                                                                        :
-                                                                        child.nameAr}}</label>
-                                                                </div>
-                                                                <small class="invalid-txt"
-                                                                    *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]">
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}} {{'mandatory_txt' |
-                                                                    translate}}
-                                                                </small>
-
-                                                            </div>
-
-                                                        </ng-container>
-
-                                                        <ng-container *ngSwitchCase="'dropdown'">
-                                                            <div
-                                                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff  mb-4">
-                                                                <span class="invalid-txt">{{field.isRequired ? '*' :
-                                                                    ''}}</span>
-                                                                <label [for]="field.key" class="form-label"> {{
-                                                                    applicationLang == 'en' ?
-                                                                    field.labelEn
-                                                                    :
-                                                                    field.labelAr}}</label> <br>
-                                                                <p-dropdown appendTo="body" [id]="field.key"
-                                                                    [readonly]="field.isReadonly"
-                                                                    [class.disabled-field]="field.isReadonly"
-                                                                    [placeholder]="field.placeholder ? field.placeholder : '--select--'"
-                                                                    [options]="field.options"
-                                                                    optionLabel="{{applicationLang == 'en' ? 'nameEn' : 'nameAr'}}"
-                                                                    optionValue="id" [formControlName]="field.key"
-                                                                    (onChange)="onLookUpChange($event, field)"
-                                                                    [filter]="true"
-                                                                    filterBy="{{applicationLang == 'en' ? 'nameEn' : 'nameAr'}}"
-                                                                    [virtualScroll]="currentServiceId == 34 ? true : false"
-                                                                    [virtualScrollItemSize]="50">
-                                                                </p-dropdown>
-                                                                <small class="invalid-txt"
-                                                                    *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]">
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}} {{'mandatory_txt' |
-                                                                    translate}}
-                                                                </small>
-                                                            </div>
-
-                                                        </ng-container>
-
-                                                        <ng-container *ngSwitchCase="'checkbox'">
-
-                                                            <div
-                                                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff  mb-4">
-                                                                <span class="invalid-txt">{{field.isRequired ? '*' :
-                                                                    ''}}</span>
-                                                                <label [for]="field.key" class="form-label"> {{
-                                                                    applicationLang == 'en' ?
-                                                                    field.labelEn
-                                                                    :
-                                                                    field.labelAr}}</label> <br>
-
-                                                                <div class="field-checkbox dynamic-form-checbox"
-                                                                    *ngIf="currentServiceId != 34">
-                                                                    <p-checkbox *ngFor="let option of field.options"
-                                                                        [name]="field.key" [value]="option.id"
-                                                                        [label]="option.nameEn"
-                                                                        [(ngModel)]="checkedValues"
-                                                                        [formControlName]="field.key">
-                                                                    </p-checkbox>
-                                                                </div>
-
-                                                                <div class="field-checkbox dynamic-form-checbox"
-                                                                    *ngIf="currentServiceId == 34">
-                                                                    <p-checkbox *ngFor="let option of field.options"
-                                                                        [name]="field.key" [value]="option.id"
-                                                                        [label]="option.nameEn"
-                                                                        [(ngModel)]="checkedValues"
-                                                                        [formControlName]="field.key">
-                                                                    </p-checkbox>
-                                                                    <small
-                                                                        *ngIf="!field.options || field.options.length == 0">
-                                                                        {{groupMembersMsg}}
-
-                                                                    </small>
-                                                                </div>
-
-                                                                <small class="invalid-txt"
-                                                                    *ngIf="field.isRequired && isFormInvalid && 
-                                                                        (!requestForm?.value[field.key.toString()] || requestForm?.value[field.key.toString()]?.length == 0  )">
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}} {{'mandatory_txt' |
-                                                                    translate}}
-                                                                </small>
-                                                            </div>
-
-                                                        </ng-container>
-
-                                                        <ng-container *ngSwitchCase="'date'">
-                                                            <!-- <p-calendar appendTo="body" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                            <ng-container *ngSwitchCase="'date'">
+                              <!-- <p-calendar appendTo="body" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
                                                                     [formControlName]="field.key" [dateFormat]="field.format"
                                                                     placeholder="MM-DD-YYYY" icon="fa fa-calendar" [showIcon]="true"
                                                                     [defaultDate]='field.initialValue' [showButtonBar]="true"
                                                                     (onSelect)="dateChange($event, field.placeholdertext )">
                                                                 </p-calendar> -->
 
-                                                            <div
-                                                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff  mb-4 date-calendar ">
-                                                                <span class="invalid-txt">{{field.isRequired ? '*' :
-                                                                    ''}}</span>
-                                                                <label [for]="field.key" class="form-label"> {{
-                                                                    applicationLang == 'en' ?
-                                                                    field.labelEn
-                                                                    :
-                                                                    field.labelAr}}</label> <br>
+                              <div
+                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4 date-calendar"
+                              >
+                                <span class="invalid-txt"
+                                  >{{field.isRequired ? '*' : ''}}</span
+                                >
+                                <label [for]="field.key" class="form-label">
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}</label
+                                >
+                                <br />
 
-                                                                <p-calendar [formControlName]="field.key"
-                                                                    [minDate]="field.minDate" [maxDate]="field.maxDate"
-                                                                    [disabled]="field.isReadonly"
-                                                                    placeholder="MM/DD/YYYY" [showIcon]="true"
-                                                                    [showTime]="false" hourFormat="12"></p-calendar>
+                                <p-calendar
+                                  [formControlName]="field.key"
+                                  [minDate]="field.minDate"
+                                  [maxDate]="field.maxDate"
+                                  [disabled]="field.isReadonly"
+                                  placeholder="MM/DD/YYYY"
+                                  [showIcon]="true"
+                                  [showTime]="false"
+                                  hourFormat="12"
+                                ></p-calendar>
 
-                                                                <small class="invalid-txt" *ngIf="field.isRequired && isFormInvalid && 
-                                                                        (!requestForm?.value[field.key.toString()] )">
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}} {{'mandatory_txt' |
-                                                                    translate}}
-                                                                </small>
-                                                            </div>
-                                                        </ng-container>
+                                <small
+                                  class="invalid-txt"
+                                  *ngIf="field.isRequired && isFormInvalid && 
+                                                                        (!requestForm?.value[field.key.toString()] )"
+                                >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}} {{'mandatory_txt' |
+                                  translate}}
+                                </small>
+                              </div>
+                            </ng-container>
 
-                                                        <ng-container *ngSwitchCase="'month'">
+                            <ng-container *ngSwitchCase="'month'">
+                              <div
+                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4 date-calendar"
+                              >
+                                <span class="invalid-txt"
+                                  >{{field.isRequired ? '*' : ''}}</span
+                                >
+                                <label [for]="field.key" class="form-label">
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}</label
+                                >
+                                <br />
 
-                                                            <div
-                                                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff  mb-4 date-calendar ">
-                                                                <span class="invalid-txt">{{field.isRequired ? '*' :
-                                                                    ''}}</span>
-                                                                <label [for]="field.key" class="form-label"> {{
-                                                                    applicationLang == 'en' ?
-                                                                    field.labelEn
-                                                                    :
-                                                                    field.labelAr}}</label> <br>
+                                <p-calendar
+                                  [formControlName]="field.key"
+                                  view="month"
+                                  dateFormat="mm/yy"
+                                  [disabled]="field.isReadonly"
+                                  [readonlyInput]="true"
+                                  placeholder="{{'select' | translate}}"
+                                  (onSelect)="onMonthSelection($event, field)"
+                                ></p-calendar>
 
-                                                                <p-calendar [formControlName]="field.key" view="month"
-                                                                    dateFormat="mm/yy" [disabled]="field.isReadonly"
-                                                                    [readonlyInput]="true"
-                                                                    placeholder="{{'select' | translate}}"
-                                                                    (onSelect)="onMonthSelection($event, field)"></p-calendar>
+                                <small
+                                  class="invalid-txt"
+                                  *ngIf="field.isRequired && isFormInvalid && 
+                                                                        (!requestForm?.value[field.key.toString()] )"
+                                >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}} {{'mandatory_txt' |
+                                  translate}}
+                                </small>
+                              </div>
+                            </ng-container>
 
-                                                                <small class="invalid-txt" *ngIf="field.isRequired && isFormInvalid && 
-                                                                        (!requestForm?.value[field.key.toString()] )">
-                                                                    {{ applicationLang == 'en' ? field.labelEn :
-                                                                    field.labelAr}} {{'mandatory_txt' |
-                                                                    translate}}
-                                                                </small>
-                                                            </div>
-                                                        </ng-container>
+                            <ng-container *ngSwitchCase="'browse'">
+                              <div
+                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4 date-calendar file-upload"
+                              >
+                                <span class="invalid-txt"
+                                  >{{field.isRequired ? '*' : ''}}</span
+                                >
+                                <label [for]="field.key" class="form-label">
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}</label
+                                >
+                                <br />
 
-                                                        <ng-container *ngSwitchCase="'browse'">
-                                                            <div
-                                                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff  mb-4 date-calendar file-upload">
-                                                                <span class="invalid-txt">{{field.isRequired ? '*' :
-                                                                    ''}}</span>
-                                                                <label [for]="field.key" class="form-label"> {{
-                                                                    applicationLang == 'en' ?
-                                                                    field.labelEn
-                                                                    :
-                                                                    field.labelAr}}</label> <br>
+                                <p-fileUpload
+                                  #fileInput
+                                  [multiple]="field.selectionType == 2 ? true : false"
+                                  (onRemove)="onFileRemove($event)"
+                                  [customUpload]="true"
+                                  accept="{{field.fileExtenions}}"
+                                  (uploadHandler)="onFileUpload($event, field)"
+                                  (onSelect)="onFileUpload($event, field)"
+                                  [showUploadButton]="false"
+                                  [showCancelButton]="false"
+                                  [disabled]="field.selectionType != 2 && requestForm?.value[field.key.toString()]?.length == 1 "
+                                  chooseLabel="{{'choose_new' | translate}}"
+                                  uploadLabel="{{'upload' | translate}}"
+                                >
+                                  <ng-template pTemplate="content">
+                                    <div
+                                      *ngIf="requestForm?.value[field.key.toString()]?.length"
+                                    >
+                                      <strong
+                                        >{{'current_files' | translate}}</strong
+                                      >
+                                      <br />
 
-                                                                <p-fileUpload #fileInput
-                                                                    [multiple]="field.selectionType == 2 ? true : false"
-                                                                    (onRemove)="onFileRemove($event)"
-                                                                    [customUpload]="true"
-                                                                    accept="{{field.fileExtenions}}"
-                                                                    (uploadHandler)="onFileUpload($event, field)"
-                                                                    (onSelect)="onFileUpload($event, field)"
-                                                                    [showUploadButton]="false"
-                                                                    [showCancelButton]="false"
-                                                                    [disabled]="field.selectionType != 2 && requestForm?.value[field.key.toString()]?.length == 1 "
-                                                                    chooseLabel="{{'choose_new' | translate}}"
-                                                                    uploadLabel="{{'upload' | translate}}">
-
-                                                                    <ng-template pTemplate="content">
-
-                                                                        <div
-                                                                            *ngIf="requestForm?.value[field.key.toString()]?.length">
-
-                                                                            <Strong>{{'current_files' |
-                                                                                translate}}</Strong> <br>
-
-                                                                            <ng-container
-                                                                                *ngFor="let file of requestForm?.value[field.key.toString()]">
-                                                                                <span
-                                                                                    [innerHTML]="getSingleAttachmentInfo(field,file)"></span>
-                                                                                <i class="pi pi-trash rem-file"
-                                                                                    (click)="onDeleteFile(field,file)"></i>
-                                                                                <hr>
-                                                                            </ng-container>
-                                                                            <!-- <p
+                                      <ng-container
+                                        *ngFor="let file of requestForm?.value[field.key.toString()]"
+                                      >
+                                        <span
+                                          [innerHTML]="getSingleAttachmentInfo(field,file)"
+                                        ></span>
+                                        <i
+                                          class="pi pi-trash rem-file"
+                                          (click)="onDeleteFile(field,file)"
+                                        ></i>
+                                        <hr />
+                                      </ng-container>
+                                      <!-- <p
                                                                                     [innerHTML]="getAttachmentInfo(field,requestForm?.value[field.key.toString()])">
                                                                                 </p> -->
-                                                                        </div>
-                                                                    </ng-template>
-                                                                </p-fileUpload>
-                                                                <!-- <p-progressBar *ngIf="fileUploadSpinner" mode="indeterminate"
-                                                             
+                                    </div>
+                                  </ng-template>
+                                </p-fileUpload>
+                                <!-- <p-progressBar *ngIf="fileUploadSpinner" mode="indeterminate"
+                                                                        [style]="{'height': '5px','background':'#1a66cc'}">
+                                                                    </p-progressBar> -->
+
+                                <small
+                                  class="invalid-txt"
+                                  *ngIf="field.isRequired && isFormInvalid && 
+                                                                        (!requestForm?.value[field.key.toString()] )"
+                                >
+                                  {{'file_upload_valiation' | translate}}
+                                  {{'mandatory_txt' | translate}}
+                                </small>
+                              </div>
+                            </ng-container>
+
+                            <ng-container *ngSwitchCase="'datetime'">
+                              <!-- <p-calendar appendTo="body" [timeOnly]="true" [style]="{'width':'100%'}"
+                                                                    [inputStyle]="{'width':'100%'}" [formControlName]="field.property"
+                                                                    [dateFormat]="field.format" placeholder="HH:MM" icon="fa fa-clock-o"
+                                                                    [showIcon]="true" [defaultDate]='field.initialValue'
+                                                                    (onSelect)="dateChange($event, field.placeholdertext )">
+                                                                </p-calendar> -->
+
+                              <!-- <p-calendar [formControlName]="field.key" [minDate]="todayDate" [showIcon]="true"
+                                                                showTime="true" [hourFormat]="12" ></p-calendar> -->
+                            </ng-container>
+
+                            <ng-container *ngSwitchCase="'search'">
+                              <div
+                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
+                              >
+                                <span class="invalid-txt"
+                                  >{{field.isRequired ? '*' : ''}}</span
+                                >
+                                <label [for]="field.key" class="form-label">
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}</label
+                                >
+                                <br />
+                                <p-autoComplete
+                                  appendTo="body"
+                                  [id]="field.key"
+                                  [disabled]="field.isReadonly"
+                                  [class.disabled-field]="field.isReadonly"
+                                  [style]="{'width':'100%','display':'block'}"
+                                  [minLength]="3"
+                                  [placeholder]="field.placeholder ? field.placeholder : '--Search(Min 3 characters)--'"
+                                  [formControlName]="field.key"
+                                  [suggestions]="filteredSuggession"
+                                  (completeMethod)="searchFilter($event, field)"
+                                  field="displayName"
+                                  [multiple]="field.selectionType == 2"
+                                ></p-autoComplete>
+                              </div>
+
+                              <small
+                                class="invalid-txt"
+                                *ngIf="field.isRequired && isFormInvalid && 
+                                                                (!requestForm?.value[field.key.toString()] )"
+                              >
+                                {{ applicationLang == 'en' ? field.labelEn :
+                                field.labelAr}} {{'mandatory_txt' | translate}}
+                              </small>
+                            </ng-container>
+
+                            <ng-container *ngSwitchCase="'user-access'">
+                              <div
+                                class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
+                              >
+                                <span class="invalid-txt"
+                                  >{{field.isRequired ? '*' : ''}}</span
+                                >
+                                <label [for]="field.key" class="form-label">
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}</label
+                                >
+                                <br />
+
+                                <div class="p-fluid">
+                                  <p-autoComplete
+                                    appendTo="body"
+                                    [id]="field.key"
+                                    [disabled]="field.isReadonly"
+                                    [class.disabled-field]="field.isReadonly"
+                                    [style]="{'width':'100%'}"
+                                    [minLength]="3"
+                                    [placeholder]="field.placeholder ? field.placeholder : '--Search (Min 3 characters)--'"
+                                    [formControlName]="field.key"
+                                    [suggestions]="filteredSuggession"
+                                    (completeMethod)="searchFilter($event, field)"
+                                    field="displayName"
+                                    [multiple]="field.selectionType == 2"
+                                  >
+                                  </p-autoComplete>
+                                </div>
+
+                                <small
+                                  class="invalid-txt"
+                                  *ngIf="field.isRequired && isFormInvalid && 
+                                                                    (!requestForm?.value[field.key.toString()] )"
+                                >
+                                  {{ applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}} {{'mandatory_txt' |
+                                  translate}}
+                                </small>
+
+                                <table
+                                  class="table table-stripped role-priv-tbl"
+                                  *ngIf="requestForm?.value[field.key]?.length > 0"
+                                >
+                                  <thead>
+                                    <th>User</th>
+                                    <th>Read</th>
+                                    <th>Write</th>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      *ngFor="let user of requestForm?.value[field.key] "
+                                    >
+                                      <td>{{user.displayName}}</td>
+                                      <td>
+                                        <input
+                                          type="checkbox"
+                                          (change)="user['canRead'] = !user['canRead']"
+                                          [checked]="user.canRead"
+                                        />
+                                      </td>
+                                      <td>
+                                        <input
+                                          type="checkbox"
+                                          (change)="user['canWrite'] = !user['canWrite']"
+                                          [checked]="user.canWrite"
+                                        />
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </ng-container>
+                          </ng-container>
+                        </ng-container>
+                        <ng-container
+                          *ngIf="showCorrespondingPOSTable && activeStepIndex == 1 && noOfCorrespondingPOS.length"
+                        >
+                          <div class="row">
+                            <div class="col-12">
+                              <table class="table table-bordered">
+                                <thead>
+                                  <tr>
+                                    <td>
+                                      <span class="invalid-txt">*</span>
+                                      Corresponding PO
+                                    </td>
+                                    <td>
+                                      <span class="invalid-txt">*</span>
+                                      Corresponding Entity
+                                    </td>
+                                    <td>
+                                      <span class="invalid-txt">*</span> Attach
+                                      PO
+                                    </td>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr
+                                    *ngFor="let po of noOfCorrespondingPOS;let $index = index"
+                                  >
+                                    <td>
+                                      <input
+                                        [(ngModel)]="po.correspondingPO"
+                                        [ngModelOptions]="{standalone: true}"
+                                        class="form-control"
+                                        placeholder="Corresponding PO {{$index + 1}}"
+                                      />
+                                      <small
+                                        class="invalid-txt"
+                                        *ngIf="!po.correspondingPO && po.showPOErrorMessage"
+                                      >
+                                        Corresponding PO {{$index + 1}}
+                                        {{'mandatory_txt' | translate}}
+                                      </small>
+                                    </td>
+                                    <td>
+                                      <p-dropdown
+                                        [(ngModel)]="po.correspondingEntity"
+                                        (onChange)="entityChange(po)"
+                                        [ngModelOptions]="{standalone: true}"
+                                        [options]="entities"
+                                        optionLabel="name"
+                                        optionValue="value"
+                                        [showClear]="true"
+                                        placeholder="Select a project"
+                                      ></p-dropdown>
+                                      <small
+                                        class="invalid-txt"
+                                        *ngIf="!po.correspondingEntity && po.showPOErrorMessage"
+                                      >
+                                        Corresponding Entity {{$index + 1}}
+                                        {{'mandatory_txt' | translate}}
+                                      </small>
+                                    </td>
+                                    <td>
+                                      <p-fileUpload
+                                        accept=".pdf"
+                                        mode="basic"
+                                        chooseLabel="Choose"
+                                        name="demo[]"
+                                        (uploadHandler)="onPOFileUpload($event, po)"
+                                        (onSelect)="onPOFileUpload($event, po)"
+                                        [showUploadButton]="false"
+                                        [showCancelButton]="false"
+                                      ></p-fileUpload>
+                                      <small
+                                        class="invalid-txt"
+                                        *ngIf="!po.correspondingEntity && po.showPOErrorMessage"
+                                      >
+                                        Attachment {{'mandatory_txt' |
+                                        translate}}
+                                      </small>
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </ng-container>
+                      </div>
+                    </form>
+
+                    <!-- dynamic fields section ends  -->
+
+                    <!-- Review form information section starts i.e last step of each request -->
+
+                    <ng-container
+                      *ngIf="activeStepIndex == (serviceSteps!.length - 1)"
+                    >
+                      <div class="row mt-3 table-itg hp-color">
+                        <ng-container
+                          *ngFor="let step of requestFormData?.serviceSteps; let ind = index"
+                        >
+                          <ng-container
+                            *ngIf="step.nameEn.toLowerCase() !== 'review'"
+                          >
+                            <h4 class="rev-step-head">
+                              {{ind + 1}}. {{applicationLang == 'en' ?
+                              step.nameEn : step.nameAr }}
+                            </h4>
+                            <ng-container
+                              *ngFor="let field of step.stepFields "
+                            >
+                              <div class="col-2" *ngIf="!field.hasCondition">
+                                <strong
+                                  >{{applicationLang == 'en' ? field.labelEn :
+                                  field.labelAr}}:</strong
+                                >
+                                <br />
+                                <p
+                                  [innerHTML]="getFieldValueFromList(field , requestForm.value[field.key]) "
+                                ></p>
+                              </div>
+                            </ng-container>
+                            <ng-container
+                              *ngIf="showCorrespondingPOSTable && currentServiceId == 54 && ind == 1"
+                            >
+                              <div class="col-12">
+                                <strong>No of corresponding POs:</strong> <br />
+                                <table
+                                  class="table table-stripped role-priv-tbl"
+                                >
+                                  <thead>
+                                    <th>PO</th>
+                                    <th>Entity</th>
+                                    <th>Attachment</th>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      *ngFor="let each of noOfCorrespondingPOS"
+                                    >
+                                      <td>{{each.correspondingPO}}</td>
+                                      <td>{{each.correspondingEntityText}}</td>
+                                      <td
+                                        [innerHTML]="getPOAttachmentLink(each.attachmentUrl)"
+                                      >
+                                        {{each.attachmentUrl}}
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </ng-container>
+                            <!-- following section is for showing managers email in reset password service -->
+                            <ng-container *ngIf="currentServiceId == 12 ">
+                              <div class="col-2">
+                                <strong
+                                  >Your Password will be email to:
+                                </strong>
+                                <br />
+                                <p>{{userManagers?.manager1Email}}</p>
+                              </div>
+                            </ng-container>
+                            <!-- managers email ends -->
+                          </ng-container>
+                        </ng-container>
+
+                        <h4
+                          class="rev-step-head"
+                          *ngIf="currentServiceId != 12 "
+                        >
+                          {{requestFormData?.serviceSteps?.length}}. {{
+                          'request_workflow' | translate }}
+                        </h4>
+
+                        <ng-container *ngIf="wfSpinner ;else showWf  ">
+                          <app-loader-skeleton
+                            [skeletonType]="'requestActions'"
+                          ></app-loader-skeleton>
+                        </ng-container>
+                        <ng-template #showWf>
+                          <div
+                            class="col-12 workflow-tbl"
+                            *ngIf="requestWorkflow.length"
+                          >
+                            <div class="row">
+                              <div class="large-12 columns line-manager">
+                                <owl-carousel-o [options]="customOptions">
+                                  <ng-container
+                                    *ngFor="let role of requestWorkflow; let ind = index"
+                                  >
+                                    <ng-template
+                                      carouselSlide
+                                      [id]="'{{ind}}'"
+                                      [width]="557"
+                                    >
+                                      <div class="item">
+                                        <div
+                                          class="col-xxl-12 col-lg-12 col-md-12 col-12 itm-padding"
+                                        >
+                                          <p class="itm-txt-min-h">
+                                            {{applicationLang == 'en' ?
+                                            role.roleNameEn : role.roleNameAr}}
+                                          </p>
+                                          <div class="progress-bar-container">
+                                            <div
+                                              class="progress-bar-child progress rounded-0"
+                                            ></div>
+                                            <div
+                                              class="progress-bar-child shrinker timelapse"
+                                            ></div>
+                                          </div>
+                                          <p
+                                            class="text-muted fs-6 text-start itm-sm-txt"
+                                          >
+                                            <span
+                                              class="row"
+                                              *ngFor="let user of role.users; let ind = index"
+                                            >
+                                              {{user.employeeName}} |
+                                              {{user.employeePosition}}
+                                            </span>
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </ng-template>
+                                  </ng-container>
+                                </owl-carousel-o>
+                              </div>
+                            </div>
+                          </div>
+                        </ng-template>
+
+                        <div
+                          *ngIf="requestFormData?.serviceInfo || requestFormData?.serviceInfoAr"
+                        >
+                          <ng-container
+                            *ngFor="let step of requestFormData?.serviceSteps; let ind = index"
+                          >
+                            <ng-container
+                              *ngIf="step.nameEn.toLowerCase() !== 'review'"
+                            >
+                              <h4 class="rev-step-head">
+                                2. {{'pass_policy' | translate}}
+                              </h4>
+                              <p
+                                [innerHTML]="requestFormData?.serviceInfo"
+                                *ngIf="applicationLang == 'en'"
+                              ></p>
+                              <p
+                                [innerHTML]="requestFormData?.serviceInfoAr"
+                                *ngIf="applicationLang == 'ar'"
+                              ></p>
+                            </ng-container>
+                          </ng-container>
+                        </div>
+                        ​
+                      </div>
+                    </ng-container>
+
+                    <!-- Review form information section ends -->
+
+                    <div class="row mt-2">
+                      <div class="col-xxl-12 col-md-12">
+                        <hr />
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div
+                        class="col-xxl-6 col-md-6 col-sm-6 col-xs-6 col-6 itm-forgot"
+                      >
+                        <ng-container
+                          *ngIf="activeStepIndex == (serviceSteps?.length! - 1)"
+                        >
+                          <input
+                            type="checkbox"
+                            [(ngModel)]="termsAccepted"
+                            id="terms_check"
+                          />
+                          &nbsp;
+                          <label for="terms_check"
+                            >{{'read_tc' | translate}}</label
+                          >
+                          <span
+                            ><a
+                              href="javascript:void(0)"
+                              (click)="showTermsConditions = true"
+                              >{{'terms_cond' | translate}}</a
+                            ></span
+                          >
+                        </ng-container>
+                      </div>
+
+                      <!-- stepper buttons start -->
+                      <br />
+                      <br />
+                      <div class="col-xxl-6 col-md-6 col-sm-6 col-xs-6 col-6">
+                        <div class="float-end">
+                          <button
+                            class="btn req-btn btn-danger rounded-0"
+                            type="button"
+                            [routerLink]="['/user/dashboard']"
+                          >
+                            {{'cancel' | translate}}
+                          </button>
+                          &nbsp;
+                          <button
+                            class="btn req-btn btn-secondary rounded-0"
+                            type="button"
+                            [disabled]="activeStepIndex == 0"
+                            (click)="onPreviousStep()"
+                          >
+                            {{'previous' | translate }}
+                          </button>
+                          &nbsp;
+
+                          <button
+                            class="btn req-btn btn-secondary rounded-0"
+                            type="button"
+                            [hidden]="activeStepIndex == (serviceSteps!.length - 1)"
+                            [pTooltip]="getToolTipMsg()"
+                            tooltipPosition="top"
+                            (click)="onNextStep()"
+                            [disabled]="errorMessage != '' "
+                          >
+                            {{'next' | translate}}
+                          </button>
+
+                          <!-- show below button on last step only  -->
+
+                          <span
+                            [pTooltip]="getSubmitTipMsg()"
+                            tooltipPosition="top"
+                          >
+                            <button
+                              *ngIf="activeStepIndex == (serviceSteps?.length! - 1)"
+                              style="margin-top: 18px"
+                              (click)="onRequestSave()"
+                              class="btn approve-btn rounded-0"
+                              type="button"
+                              [disabled]="showSaveRequestLoader || !termsAccepted || errorMessage != ''"
+                            >
+                              {{'submit_btn_txt' | translate}}
+
+                              <div
+                                *ngIf="showSaveRequestLoader"
+                                class="spinner-grow text-light"
+                                role="status"
+                                style="height: 15px; width: 15px"
+                              >
+                                <span class="visually-hidden">Loading...</span>
+                              </div>
+                            </button>
+                          </span>
+                        </div>
+                      </div>
+                      <!-- stepper buttons end -->
+                    </div>
+                  </div>
+
+                  <!---service box-->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!---main content box -->
+        </div>
+      </div>
+    </div>
+    <!--Main content-->
+  </div>
+
+  <p-dialog
+    [(visible)]="showTermsConditions"
+    [style]="{width: '600px'}"
+    header="{{'terms_cond' | translate }}"
+    [modal]="true"
+    [closable]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="filed">
+        <p [innerHTML]="requestFormData?.consent"></p>
+
+        <br />
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <button
+        (click)="showTermsConditions = false"
+        class="btn req-btn btn-secondary rounded-0"
+        type="button"
+      >
+        {{'OK' | translate }}
+      </button>
+    </ng-template>
+  </p-dialog>
+
+  <app-request-history
+    *ngIf="showRequestHistory"
+    [historyData]="requestHistory"
+    (onHistoryBarClose)="onHistorySideClose($event)"
+  ></app-request-history>
+</ng-container>
+
+<!-- <div class="cardBox" [ngClass]="{'saloader':showProgress}">
+    <h4>Apply {{templateConfig?.navigationText}}</h4>
+    <div class="form-inputs p-grid p-fluid form-design-p" *ngIf="!isSubmitted">
+        <form class="form-design" [formGroup]="requestForm" *ngIf="isPageLoaded" (ngSubmit)="SubmitRequestForm($event)">
+            <ng-container *ngFor="let field of fields">
+                <div class="col-md-4 p-md-4 mh" [ngClass]="{'hidden-form-control': field?.type == 'hidden'}">
+                    <div class="p-field">
+                        <label class="ab-label" [ngClass]="{'mandatory_txt':field.isrequired}"
+                            *ngIf="field.type != 'hidden'">{{field.placeholdertext}}</label>
+                        <div [ngSwitch]="field?.type">
+                            <ng-container *ngSwitchCase="'date'">
+                                <p-calendar appendTo="body" [style]="{'width':'100%'}" [inputStyle]="{'width':'100%'}"
+                                    [formControlName]="field.property" [dateFormat]="field.format"
+                                    placeholder="MM-DD-YYYY" icon="fa fa-calendar" [showIcon]="true"
+                                    [defaultDate]='field.initialValue' [showButtonBar]="true"
+                                    (onSelect)="dateChange($event, field.placeholdertext )">
+                                </p-calendar>
+
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'time'">
+                                <p-calendar appendTo="body" [timeOnly]="true" [style]="{'width':'100%'}"
+                                    [inputStyle]="{'width':'100%'}" [formControlName]="field.property"
+                                    [dateFormat]="field.format" placeholder="HH:MM" icon="fa fa-clock-o"
+                                    [showIcon]="true" [defaultDate]='field.initialValue'
+                                    (onSelect)="dateChange($event, field.placeholdertext )">
+                                </p-calendar>
+
+                            </ng-container>
+
+                            <ng-container *ngSwitchCase="'radiobutton'">
+
+                                <div class="form-group col-md-6 p-field-radiobutton"
+                                    *ngFor="let child of field.collection">
+                                    <p-radioButton [inputId]="field.property + child.name" [name]="field.property"
+                                        [value]="child.value" [formControlName]="field.property">
+                                    </p-radioButton>
+                                    <label style="padding-top: 10px;"
+                                        [for]="field.property + child.name">{{child.name}}</label>
+                                </div>
+
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'dropdown'">
+                                <p-dropdown appendTo="body" class="primedd" [id]="field.property"
+                                    [options]="field.collection" optionLabel="value" [disabled]="field.readonly"
+                                    optionValue="value" placeholder="Select {{field.placeholdertext}}"
+                                    [formControlName]="field.property"
+                                    (onChange)="onDDChange($event, field.placeholdertext )" filter=true>
+                                </p-dropdown>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'text'">
+                                <input type="text" [formControlName]="field.property"
+                                    placeholder="{{field.placeholdertext}}" class="form-control"
+                                    [readonly]="field.readonly" (change)="onTextChange($event,field.placeholdertext)">
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'number'">
+                                <input type="text" [formControlName]="field.property"
+                                    placeholder="{{field.placeholdertext}}" class="form-control"
+                                    [readonly]="field.readonly">
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'hidden'">
+                                <input type="hidden" [formControlName]="field.property"
+                                    placeholder="{{field.placeholdertext}}" class="form-control"
+                                    [readonly]="field.readonly">
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <div class="form-row col-md-12">
+                <div class="form-group col-md-3 pull-right no-padding">
+                    <button id="btnSubmit" [disabled]="requestForm.invalid" class="btn btn-success"
+                        type="submit">Submit</button>
+                </div>
+            </div>
+
+
+        </form>
+    </div>
+    <div class="form-inputs" *ngIf="isSubmitted" style="overflow: hidden;">
+        <form [formGroup]="confirmForm" (ngSubmit)="confirmTicket($event)">
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <app-upload [attachHeader]="['Add Attachment']" [allowMultiple]="true"
+                        [fileTypes]="['png','jpg', 'txt', 'pdf', 'xls', 'xlsx', 'doc', 'docx','msg']"
+                        (onUploadFinished)="uploadFinished($event)" [maxFileSize]="1048576" [maxNoFiles]="3">
+                    </app-upload>
+                </div>
+
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label for="exampleFormControlTextarea1">Comments</label>
+                    <textarea id="P_ABSENCE_COMMENTS" class="form-control" formControlName="P_COMMENTS"
+                        rows="3"></textarea>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <div class="myteam" *ngIf="approverList.length">
+                        <ul>
+                            <li *ngFor="let user of approverList">
+                                <div class="imagelist">
+                                    <img *ngIf="user.employeE_IMAGE"
+                                        [src]="'data:image/png;base64,' + user.employeE_IMAGE" alt="">
+                                    <img *ngIf="!user.employeE_IMAGE" src="assets/images/boss.png">
+                                </div>
+                                <div class="textlist">
+                                    <h6>
+                                        {{user.approver}}
+                                        <span>
+                                            {{user.positioN_TITLE}}
+                                        </span>
+                                    </h6>
+
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                    <div class="myteam" *ngIf="!approverList.length">
+                        <ul>
+                            <li>
+                                ! There is no approver found
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-row pull-right">
+                <div class="form-group col-md-6">
+                    <button id="btnCancel" class="btn btn-cancel" (click)="OnCancelButtonClick()"
+                        type="button">Cancel</button>
+                </div>
+                <div class="form-group col-md-6">
+                    <button id="btnConfirm" [disabled]="confirmForm.invalid" class="btn btn-success-applv"
+                        type="submit">Confirm</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div> -->
