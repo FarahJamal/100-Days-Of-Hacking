@@ -31,11 +31,11 @@
                       <div class="col-xxl-6 col-md-6">
                         <div class="itm-page-title">
                           <h5>
-                            {{applicationLang == 'en' ? requestFormData?.nameEn
+                            {{ applicationLang == "en" ? requestFormData?.nameEn
                             : requestFormData?.nameAr }}
                           </h5>
                           <p>
-                            {{applicationLang == 'en' ?
+                            {{ applicationLang == "en" ?
                             requestFormData?.descriptionEn :
                             requestFormData?.descriptionAr }}
                             <!-- <a href="#"><img src="../../../../assets/images/login/new-staff-q.svg" /></a> -->
@@ -49,8 +49,8 @@
                           class="btn btn-secondary rounded-0 pull-right"
                           type="button"
                         >
-                          {{'prev_reqs' | translate}}
-                          ({{requestHistory.length}})
+                          {{ "prev_reqs" | translate }} ({{
+                          requestHistory.length }})
                         </button>
                       </div>
                     </div>
@@ -58,22 +58,29 @@
                       <div class="col-xxl-6 col-md-12">
                         <div class="row">
                           <ng-container
-                            *ngFor="let step of requestFormData?.serviceSteps; let ind = index"
+                            *ngFor="
+                              let step of requestFormData?.serviceSteps;
+                              let ind = index
+                            "
                           >
                             <div
                               class="col-xxl-4 col-lg-3 col-md-6 col-6 itm-line-height"
                             >
                               <p
-                                [class.itm-text-warning]="ind == activeStepIndex"
+                                [class.itm-text-warning]="
+                                  ind == activeStepIndex
+                                "
                                 [class.itm-text-success]="ind < activeStepIndex"
                               >
-                                {{ind+1}}. {{applicationLang == 'en' ?
-                                step.nameEn : step.nameAr}}
+                                {{ ind + 1 }}. {{ applicationLang == "en" ?
+                                step.nameEn : step.nameAr }}
                               </p>
                               <div class="progress-bar-container">
                                 <div
                                   class="progress-bar-child progress rounded-0"
-                                  [class.itm-bg-warning]="ind == activeStepIndex"
+                                  [class.itm-bg-warning]="
+                                    ind == activeStepIndex
+                                  "
                                   [class.itm-bg-success]="ind < activeStepIndex"
                                 ></div>
                                 <div
@@ -89,18 +96,18 @@
                     <div class="row mt-3">
                       <div class="col-xxl-12 col-md-12">
                         <div class="itm-caution" *ngIf="isFormInvalid">
-                          <p>{{'form_error_txt' | translate}}:</p>
+                          <p>{{ "form_error_txt" | translate }}:</p>
                         </div>
                       </div>
                     </div>
                     <div class="row">
                       <div class="col-xxl-12 col-md-12">
                         <div class="text-bg-secondary p-3">
-                          {{ applicationLang == 'en' ?
-                          requestFormData?.serviceSteps[activeStepIndex]?.nameEn
-                          :
-                          requestFormData?.serviceSteps[activeStepIndex]?.nameAr
-                          }}
+                          {{ applicationLang == "en" ?
+                          requestFormData?.serviceSteps[activeStepIndex]
+                          ?.nameEn :
+                          requestFormData?.serviceSteps[activeStepIndex]
+                          ?.nameAr }}
 
                           <div
                             *ngIf="employeeDataSpinner"
@@ -122,9 +129,9 @@
 
                         <div
                           class="heading-review"
-                          *ngIf="activeStepIndex == (serviceSteps!.length - 1)"
+                          *ngIf="activeStepIndex == serviceSteps!.length - 1"
                         >
-                          <h3>{{'req_review_heading' | translate}}:</h3>
+                          <h3>{{ "req_review_heading" | translate }}:</h3>
                         </div>
                       </div>
                     </div>
@@ -133,7 +140,11 @@
                     <form class="form-design" [formGroup]="requestForm">
                       <div class="row mt-3">
                         <ng-container
-                          *ngFor="let field of requestFormData?.serviceSteps[activeStepIndex]?.stepFields"
+                          *ngFor="
+                            let field of requestFormData?.serviceSteps[
+                              activeStepIndex
+                            ]?.stepFields
+                          "
                         >
                           <ng-container
                             *ngIf="!field?.hasCondition"
@@ -145,10 +156,10 @@
                               >
                                 <label [for]="field.key" class="form-label">
                                   <span class="invalid-txt"
-                                    >{{field.isRequired ? '*' : ''}}</span
+                                    >{{ field.isRequired ? "*" : "" }}</span
                                   >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}
                                 </label>
 
                                 <input
@@ -172,18 +183,28 @@
                                 </button>
                                 <small
                                   class="invalid-txt"
-                                  *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]"
+                                  *ngIf="
+                                    field.isRequired &&
+                                    isFormInvalid &&
+                                    !requestForm?.value[field.key.toString()]
+                                  "
                                 >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}} {{'mandatory_txt' |
-                                  translate}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }} {{ "mandatory_txt" |
+                                  translate }}
                                 </small>
                                 <small
                                   class="invalid-txt"
-                                  *ngIf="field.regex && isFormInvalid && this.requestForm.controls[field.key.toString()]?.errors?.pattern"
+                                  *ngIf="
+                                    field.regex &&
+                                    isFormInvalid &&
+                                    this.requestForm.controls[
+                                      field.key.toString()
+                                    ]?.errors?.pattern
+                                  "
                                 >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}} should be a valid input
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }} should be a valid input
                                 </small>
                               </div>
                             </ng-container>
@@ -194,10 +215,10 @@
                               >
                                 <label [for]="field.key" class="form-label">
                                   <span class="invalid-txt"
-                                    >{{field.isRequired ? '*' : ''}}</span
+                                    >{{ field.isRequired ? "*" : "" }}</span
                                   >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}
                                 </label>
                                 <input
                                   type="number"
@@ -210,11 +231,15 @@
                                 />
                                 <small
                                   class="invalid-txt"
-                                  *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]"
+                                  *ngIf="
+                                    field.isRequired &&
+                                    isFormInvalid &&
+                                    !requestForm?.value[field.key.toString()]
+                                  "
                                 >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}} {{'mandatory_txt' |
-                                  translate}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }} {{ "mandatory_txt" |
+                                  translate }}
                                 </small>
                               </div>
                             </ng-container>
@@ -225,10 +250,10 @@
                               >
                                 <label [for]="field.key" class="form-label">
                                   <span class="invalid-txt"
-                                    >{{field.isRequired ? '*' : ''}}</span
+                                    >{{ field.isRequired ? "*" : "" }}</span
                                   >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}
                                 </label>
                                 <input
                                   type="password"
@@ -241,11 +266,15 @@
                                 />
                                 <small
                                   class="invalid-txt"
-                                  *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]"
+                                  *ngIf="
+                                    field.isRequired &&
+                                    isFormInvalid &&
+                                    !requestForm?.value[field.key.toString()]
+                                  "
                                 >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}} {{'mandatory_txt' |
-                                  translate}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }} {{ "mandatory_txt" |
+                                  translate }}
                                 </small>
                               </div>
                             </ng-container>
@@ -256,10 +285,10 @@
                               >
                                 <label [for]="field.key" class="form-label">
                                   <span class="invalid-txt"
-                                    >{{field.isRequired ? '*' : ''}}</span
+                                    >{{ field.isRequired ? "*" : "" }}</span
                                   >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}
                                 </label>
                                 <textarea
                                   [formControlName]="field.key"
@@ -271,11 +300,15 @@
                                 ></textarea>
                                 <small
                                   class="invalid-txt"
-                                  *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]"
+                                  *ngIf="
+                                    field.isRequired &&
+                                    isFormInvalid &&
+                                    !requestForm?.value[field.key.toString()]
+                                  "
                                 >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}} {{'mandatory_txt' |
-                                  translate}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }} {{ "mandatory_txt" |
+                                  translate }}
                                 </small>
                               </div>
                             </ng-container>
@@ -286,10 +319,10 @@
                               >
                                 <label [for]="field.key" class="form-label">
                                   <span class="invalid-txt"
-                                    >{{field.isRequired ? '*' : ''}}</span
+                                    >{{ field.isRequired ? "*" : "" }}</span
                                   >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}
                                 </label>
                                 <div
                                   class="p-field-radiobutton"
@@ -304,17 +337,21 @@
                                   >
                                   </p-radioButton>
                                   <label [for]="field.key + child.nameEn"
-                                    >{{applicationLang == 'en' ? child.nameEn :
-                                    child.nameAr}}</label
+                                    >{{ applicationLang == "en" ? child.nameEn :
+                                    child.nameAr }}</label
                                   >
                                 </div>
                                 <small
                                   class="invalid-txt"
-                                  *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]"
+                                  *ngIf="
+                                    field.isRequired &&
+                                    isFormInvalid &&
+                                    !requestForm?.value[field.key.toString()]
+                                  "
                                 >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}} {{'mandatory_txt' |
-                                  translate}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }} {{ "mandatory_txt" |
+                                  translate }}
                                 </small>
                               </div>
                             </ng-container>
@@ -324,11 +361,11 @@
                                 class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
                               >
                                 <span class="invalid-txt"
-                                  >{{field.isRequired ? '*' : ''}}</span
+                                  >{{ field.isRequired ? "*" : "" }}</span
                                 >
                                 <label [for]="field.key" class="form-label">
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}</label
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}</label
                                 >
                                 <br />
                                 <p-dropdown
@@ -336,25 +373,43 @@
                                   [id]="field.key"
                                   [readonly]="field.isReadonly"
                                   [class.disabled-field]="field.isReadonly"
-                                  [placeholder]="field.placeholder ? field.placeholder : '--select--'"
+                                  [placeholder]="
+                                    field.placeholder
+                                      ? field.placeholder
+                                      : '--select--'
+                                  "
                                   [options]="field.options"
-                                  optionLabel="{{applicationLang == 'en' ? 'nameEn' : 'nameAr'}}"
+                                  optionLabel="{{
+                                    applicationLang == 'en'
+                                      ? 'nameEn'
+                                      : 'nameAr'
+                                  }}"
                                   optionValue="id"
                                   [formControlName]="field.key"
                                   (onChange)="onLookUpChange($event, field)"
                                   [filter]="true"
-                                  filterBy="{{applicationLang == 'en' ? 'nameEn' : 'nameAr'}}"
-                                  [virtualScroll]="currentServiceId == 34 ? true : false"
+                                  filterBy="{{
+                                    applicationLang == 'en'
+                                      ? 'nameEn'
+                                      : 'nameAr'
+                                  }}"
+                                  [virtualScroll]="
+                                    currentServiceId == 34 ? true : false
+                                  "
                                   [virtualScrollItemSize]="50"
                                 >
                                 </p-dropdown>
                                 <small
                                   class="invalid-txt"
-                                  *ngIf="field.isRequired && isFormInvalid && !requestForm?.value[field.key.toString()]"
+                                  *ngIf="
+                                    field.isRequired &&
+                                    isFormInvalid &&
+                                    !requestForm?.value[field.key.toString()]
+                                  "
                                 >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}} {{'mandatory_txt' |
-                                  translate}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }} {{ "mandatory_txt" |
+                                  translate }}
                                 </small>
                               </div>
                             </ng-container>
@@ -364,11 +419,11 @@
                                 class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
                               >
                                 <span class="invalid-txt"
-                                  >{{field.isRequired ? '*' : ''}}</span
+                                  >{{ field.isRequired ? "*" : "" }}</span
                                 >
                                 <label [for]="field.key" class="form-label">
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}</label
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}</label
                                 >
                                 <br />
 
@@ -401,20 +456,30 @@
                                   >
                                   </p-checkbox>
                                   <small
-                                    *ngIf="!field.options || field.options.length == 0"
+                                    *ngIf="
+                                      !field.options ||
+                                      field.options.length == 0
+                                    "
                                   >
-                                    {{groupMembersMsg}}
+                                    {{ groupMembersMsg }}
                                   </small>
                                 </div>
 
                                 <small
                                   class="invalid-txt"
-                                  *ngIf="field.isRequired && isFormInvalid && 
-                                                                        (!requestForm?.value[field.key.toString()] || requestForm?.value[field.key.toString()]?.length == 0  )"
+                                  *ngIf="
+                                    field.isRequired &&
+                                    isFormInvalid &&
+                                    (!requestForm?.value[
+                                      field.key.toString()
+                                    ] ||
+                                      requestForm?.value[field.key.toString()]
+                                        ?.length == 0)
+                                  "
                                 >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}} {{'mandatory_txt' |
-                                  translate}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }} {{ "mandatory_txt" |
+                                  translate }}
                                 </small>
                               </div>
                             </ng-container>
@@ -431,11 +496,11 @@
                                 class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4 date-calendar"
                               >
                                 <span class="invalid-txt"
-                                  >{{field.isRequired ? '*' : ''}}</span
+                                  >{{ field.isRequired ? "*" : "" }}</span
                                 >
                                 <label [for]="field.key" class="form-label">
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}</label
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}</label
                                 >
                                 <br />
 
@@ -452,12 +517,15 @@
 
                                 <small
                                   class="invalid-txt"
-                                  *ngIf="field.isRequired && isFormInvalid && 
-                                                                        (!requestForm?.value[field.key.toString()] )"
+                                  *ngIf="
+                                    field.isRequired &&
+                                    isFormInvalid &&
+                                    !requestForm?.value[field.key.toString()]
+                                  "
                                 >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}} {{'mandatory_txt' |
-                                  translate}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }} {{ "mandatory_txt" |
+                                  translate }}
                                 </small>
                               </div>
                             </ng-container>
@@ -467,11 +535,11 @@
                                 class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4 date-calendar"
                               >
                                 <span class="invalid-txt"
-                                  >{{field.isRequired ? '*' : ''}}</span
+                                  >{{ field.isRequired ? "*" : "" }}</span
                                 >
                                 <label [for]="field.key" class="form-label">
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}</label
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}</label
                                 >
                                 <br />
 
@@ -481,18 +549,21 @@
                                   dateFormat="mm/yy"
                                   [disabled]="field.isReadonly"
                                   [readonlyInput]="true"
-                                  placeholder="{{'select' | translate}}"
+                                  placeholder="{{ 'select' | translate }}"
                                   (onSelect)="onMonthSelection($event, field)"
                                 ></p-calendar>
 
                                 <small
                                   class="invalid-txt"
-                                  *ngIf="field.isRequired && isFormInvalid && 
-                                                                        (!requestForm?.value[field.key.toString()] )"
+                                  *ngIf="
+                                    field.isRequired &&
+                                    isFormInvalid &&
+                                    !requestForm?.value[field.key.toString()]
+                                  "
                                 >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}} {{'mandatory_txt' |
-                                  translate}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }} {{ "mandatory_txt" |
+                                  translate }}
                                 </small>
                               </div>
                             </ng-container>
@@ -502,46 +573,62 @@
                                 class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4 date-calendar file-upload"
                               >
                                 <span class="invalid-txt"
-                                  >{{field.isRequired ? '*' : ''}}</span
+                                  >{{ field.isRequired ? "*" : "" }}</span
                                 >
                                 <label [for]="field.key" class="form-label">
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}</label
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}</label
                                 >
                                 <br />
 
                                 <p-fileUpload
                                   #fileInput
-                                  [multiple]="field.selectionType == 2 ? true : false"
+                                  [multiple]="
+                                    field.selectionType == 2 ? true : false
+                                  "
                                   (onRemove)="onFileRemove($event)"
                                   [customUpload]="true"
-                                  accept="{{field.fileExtenions}}"
+                                  accept="{{ field.fileExtenions }}"
                                   (uploadHandler)="onFileUpload($event, field)"
                                   (onSelect)="onFileUpload($event, field)"
                                   [showUploadButton]="false"
                                   [showCancelButton]="false"
-                                  [disabled]="field.selectionType != 2 && requestForm?.value[field.key.toString()]?.length == 1 "
-                                  chooseLabel="{{'choose_new' | translate}}"
-                                  uploadLabel="{{'upload' | translate}}"
+                                  [disabled]="
+                                    field.selectionType != 2 &&
+                                    requestForm?.value[field.key.toString()]
+                                      ?.length == 1
+                                  "
+                                  chooseLabel="{{ 'choose_new' | translate }}"
+                                  uploadLabel="{{ 'upload' | translate }}"
                                 >
                                   <ng-template pTemplate="content">
                                     <div
-                                      *ngIf="requestForm?.value[field.key.toString()]?.length"
+                                      *ngIf="
+                                        requestForm?.value[field.key.toString()]
+                                          ?.length
+                                      "
                                     >
                                       <strong
-                                        >{{'current_files' | translate}}</strong
+                                        >{{ "current_files" | translate
+                                        }}</strong
                                       >
                                       <br />
 
                                       <ng-container
-                                        *ngFor="let file of requestForm?.value[field.key.toString()]"
+                                        *ngFor="
+                                          let file of requestForm?.value[
+                                            field.key.toString()
+                                          ]
+                                        "
                                       >
                                         <span
-                                          [innerHTML]="getSingleAttachmentInfo(field,file)"
+                                          [innerHTML]="
+                                            getSingleAttachmentInfo(field, file)
+                                          "
                                         ></span>
                                         <i
                                           class="pi pi-trash rem-file"
-                                          (click)="onDeleteFile(field,file)"
+                                          (click)="onDeleteFile(field, file)"
                                         ></i>
                                         <hr />
                                       </ng-container>
@@ -557,11 +644,14 @@
 
                                 <small
                                   class="invalid-txt"
-                                  *ngIf="field.isRequired && isFormInvalid && 
-                                                                        (!requestForm?.value[field.key.toString()] )"
+                                  *ngIf="
+                                    field.isRequired &&
+                                    isFormInvalid &&
+                                    !requestForm?.value[field.key.toString()]
+                                  "
                                 >
-                                  {{'file_upload_valiation' | translate}}
-                                  {{'mandatory_txt' | translate}}
+                                  {{ "file_upload_valiation" | translate }} {{
+                                  "mandatory_txt" | translate }}
                                 </small>
                               </div>
                             </ng-container>
@@ -583,11 +673,11 @@
                                 class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
                               >
                                 <span class="invalid-txt"
-                                  >{{field.isRequired ? '*' : ''}}</span
+                                  >{{ field.isRequired ? "*" : "" }}</span
                                 >
                                 <label [for]="field.key" class="form-label">
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}</label
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}</label
                                 >
                                 <br />
                                 <p-autoComplete
@@ -595,9 +685,13 @@
                                   [id]="field.key"
                                   [disabled]="field.isReadonly"
                                   [class.disabled-field]="field.isReadonly"
-                                  [style]="{'width':'100%','display':'block'}"
+                                  [style]="{ width: '100%', display: 'block' }"
                                   [minLength]="3"
-                                  [placeholder]="field.placeholder ? field.placeholder : '--Search(Min 3 characters)--'"
+                                  [placeholder]="
+                                    field.placeholder
+                                      ? field.placeholder
+                                      : '--Search(Min 3 characters)--'
+                                  "
                                   [formControlName]="field.key"
                                   [suggestions]="filteredSuggession"
                                   (completeMethod)="searchFilter($event, field)"
@@ -608,11 +702,15 @@
 
                               <small
                                 class="invalid-txt"
-                                *ngIf="field.isRequired && isFormInvalid && 
-                                                                (!requestForm?.value[field.key.toString()] )"
+                                *ngIf="
+                                  field.isRequired &&
+                                  isFormInvalid &&
+                                  !requestForm?.value[field.key.toString()]
+                                "
                               >
-                                {{ applicationLang == 'en' ? field.labelEn :
-                                field.labelAr}} {{'mandatory_txt' | translate}}
+                                {{ applicationLang == "en" ? field.labelEn :
+                                field.labelAr }} {{ "mandatory_txt" | translate
+                                }}
                               </small>
                             </ng-container>
 
@@ -621,11 +719,11 @@
                                 class="col-xxl-4 col-md-4 itm-pos-rel itm-input-staff mb-4"
                               >
                                 <span class="invalid-txt"
-                                  >{{field.isRequired ? '*' : ''}}</span
+                                  >{{ field.isRequired ? "*" : "" }}</span
                                 >
                                 <label [for]="field.key" class="form-label">
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}</label
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}</label
                                 >
                                 <br />
 
@@ -635,12 +733,18 @@
                                     [id]="field.key"
                                     [disabled]="field.isReadonly"
                                     [class.disabled-field]="field.isReadonly"
-                                    [style]="{'width':'100%'}"
+                                    [style]="{ width: '100%' }"
                                     [minLength]="3"
-                                    [placeholder]="field.placeholder ? field.placeholder : '--Search (Min 3 characters)--'"
+                                    [placeholder]="
+                                      field.placeholder
+                                        ? field.placeholder
+                                        : '--Search (Min 3 characters)--'
+                                    "
                                     [formControlName]="field.key"
                                     [suggestions]="filteredSuggession"
-                                    (completeMethod)="searchFilter($event, field)"
+                                    (completeMethod)="
+                                      searchFilter($event, field)
+                                    "
                                     field="displayName"
                                     [multiple]="field.selectionType == 2"
                                   >
@@ -649,17 +753,22 @@
 
                                 <small
                                   class="invalid-txt"
-                                  *ngIf="field.isRequired && isFormInvalid && 
-                                                                    (!requestForm?.value[field.key.toString()] )"
+                                  *ngIf="
+                                    field.isRequired &&
+                                    isFormInvalid &&
+                                    !requestForm?.value[field.key.toString()]
+                                  "
                                 >
-                                  {{ applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}} {{'mandatory_txt' |
-                                  translate}}
+                                  {{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }} {{ "mandatory_txt" |
+                                  translate }}
                                 </small>
 
                                 <table
                                   class="table table-stripped role-priv-tbl"
-                                  *ngIf="requestForm?.value[field.key]?.length > 0"
+                                  *ngIf="
+                                    requestForm?.value[field.key]?.length > 0
+                                  "
                                 >
                                   <thead>
                                     <th>User</th>
@@ -668,20 +777,28 @@
                                   </thead>
                                   <tbody>
                                     <tr
-                                      *ngFor="let user of requestForm?.value[field.key] "
+                                      *ngFor="
+                                        let user of requestForm?.value[
+                                          field.key
+                                        ]
+                                      "
                                     >
-                                      <td>{{user.displayName}}</td>
+                                      <td>{{ user.displayName }}</td>
                                       <td>
                                         <input
                                           type="checkbox"
-                                          (change)="user['canRead'] = !user['canRead']"
+                                          (change)="
+                                            user['canRead'] = !user['canRead']
+                                          "
                                           [checked]="user.canRead"
                                         />
                                       </td>
                                       <td>
                                         <input
                                           type="checkbox"
-                                          (change)="user['canWrite'] = !user['canWrite']"
+                                          (change)="
+                                            user['canWrite'] = !user['canWrite']
+                                          "
                                           [checked]="user.canWrite"
                                         />
                                       </td>
@@ -693,7 +810,11 @@
                           </ng-container>
                         </ng-container>
                         <ng-container
-                          *ngIf="showCorrespondingPOSTable && activeStepIndex == 1 && noOfCorrespondingPOS.length"
+                          *ngIf="
+                            showCorrespondingPOSTable &&
+                            activeStepIndex == 1 &&
+                            noOfCorrespondingPOS.length
+                          "
                         >
                           <div class="row">
                             <div class="col-12">
@@ -716,28 +837,36 @@
                                 </thead>
                                 <tbody>
                                   <tr
-                                    *ngFor="let po of noOfCorrespondingPOS;let $index = index"
+                                    *ngFor="
+                                      let po of noOfCorrespondingPOS;
+                                      let $index = index
+                                    "
                                   >
                                     <td>
                                       <input
                                         [(ngModel)]="po.correspondingPO"
-                                        [ngModelOptions]="{standalone: true}"
+                                        [ngModelOptions]="{ standalone: true }"
                                         class="form-control"
-                                        placeholder="Corresponding PO {{$index + 1}}"
+                                        placeholder="Corresponding PO {{
+                                          $index + 1
+                                        }}"
                                       />
                                       <small
                                         class="invalid-txt"
-                                        *ngIf="!po.correspondingPO && po.showPOErrorMessage"
+                                        *ngIf="
+                                          !po.correspondingPO &&
+                                          po.showPOErrorMessage
+                                        "
                                       >
-                                        Corresponding PO {{$index + 1}}
-                                        {{'mandatory_txt' | translate}}
+                                        Corresponding PO {{ $index + 1 }} {{
+                                        "mandatory_txt" | translate }}
                                       </small>
                                     </td>
                                     <td>
                                       <p-dropdown
                                         [(ngModel)]="po.correspondingEntity"
                                         (onChange)="entityChange(po)"
-                                        [ngModelOptions]="{standalone: true}"
+                                        [ngModelOptions]="{ standalone: true }"
                                         [options]="entities"
                                         optionLabel="name"
                                         optionValue="value"
@@ -746,10 +875,13 @@
                                       ></p-dropdown>
                                       <small
                                         class="invalid-txt"
-                                        *ngIf="!po.correspondingEntity && po.showPOErrorMessage"
+                                        *ngIf="
+                                          !po.correspondingEntity &&
+                                          po.showPOErrorMessage
+                                        "
                                       >
-                                        Corresponding Entity {{$index + 1}}
-                                        {{'mandatory_txt' | translate}}
+                                        Corresponding Entity {{ $index + 1 }} {{
+                                        "mandatory_txt" | translate }}
                                       </small>
                                     </td>
                                     <td>
@@ -758,17 +890,22 @@
                                         mode="basic"
                                         chooseLabel="Choose"
                                         name="demo[]"
-                                        (uploadHandler)="onPOFileUpload($event, po)"
+                                        (uploadHandler)="
+                                          onPOFileUpload($event, po)
+                                        "
                                         (onSelect)="onPOFileUpload($event, po)"
                                         [showUploadButton]="false"
                                         [showCancelButton]="false"
                                       ></p-fileUpload>
                                       <small
                                         class="invalid-txt"
-                                        *ngIf="!po.correspondingEntity && po.showPOErrorMessage"
+                                        *ngIf="
+                                          !po.correspondingEntity &&
+                                          po.showPOErrorMessage
+                                        "
                                       >
-                                        Attachment {{'mandatory_txt' |
-                                        translate}}
+                                        Attachment {{ "mandatory_txt" |
+                                        translate }}
                                       </small>
                                     </td>
                                   </tr>
@@ -785,35 +922,45 @@
                     <!-- Review form information section starts i.e last step of each request -->
 
                     <ng-container
-                      *ngIf="activeStepIndex == (serviceSteps!.length - 1)"
+                      *ngIf="activeStepIndex == serviceSteps!.length - 1"
                     >
                       <div class="row mt-3 table-itg hp-color">
                         <ng-container
-                          *ngFor="let step of requestFormData?.serviceSteps; let ind = index"
+                          *ngFor="
+                            let step of requestFormData?.serviceSteps;
+                            let ind = index
+                          "
                         >
                           <ng-container
                             *ngIf="step.nameEn.toLowerCase() !== 'review'"
                           >
                             <h4 class="rev-step-head">
-                              {{ind + 1}}. {{applicationLang == 'en' ?
+                              {{ ind + 1 }}. {{ applicationLang == "en" ?
                               step.nameEn : step.nameAr }}
                             </h4>
-                            <ng-container
-                              *ngFor="let field of step.stepFields "
-                            >
+                            <ng-container *ngFor="let field of step.stepFields">
                               <div class="col-2" *ngIf="!field.hasCondition">
                                 <strong
-                                  >{{applicationLang == 'en' ? field.labelEn :
-                                  field.labelAr}}:</strong
+                                  >{{ applicationLang == "en" ? field.labelEn :
+                                  field.labelAr }}:</strong
                                 >
                                 <br />
                                 <p
-                                  [innerHTML]="getFieldValueFromList(field , requestForm.value[field.key]) "
+                                  [innerHTML]="
+                                    getFieldValueFromList(
+                                      field,
+                                      requestForm.value[field.key]
+                                    )
+                                  "
                                 ></p>
                               </div>
                             </ng-container>
                             <ng-container
-                              *ngIf="showCorrespondingPOSTable && currentServiceId == 54 && ind == 1"
+                              *ngIf="
+                                showCorrespondingPOSTable &&
+                                currentServiceId == 54 &&
+                                ind == 1
+                              "
                             >
                               <div class="col-12">
                                 <strong>No of corresponding POs:</strong> <br />
@@ -829,12 +976,18 @@
                                     <tr
                                       *ngFor="let each of noOfCorrespondingPOS"
                                     >
-                                      <td>{{each.correspondingPO}}</td>
-                                      <td>{{each.correspondingEntityText}}</td>
+                                      <td>{{ each.correspondingPO }}</td>
+                                      <td>
+                                        {{ each.correspondingEntityText }}
+                                      </td>
                                       <td
-                                        [innerHTML]="getPOAttachmentLink(each.attachmentUrl)"
+                                        [innerHTML]="
+                                          getPOAttachmentLink(
+                                            each.attachmentUrl
+                                          )
+                                        "
                                       >
-                                        {{each.attachmentUrl}}
+                                        {{ each.attachmentUrl }}
                                       </td>
                                     </tr>
                                   </tbody>
@@ -842,13 +995,13 @@
                               </div>
                             </ng-container>
                             <!-- following section is for showing managers email in reset password service -->
-                            <ng-container *ngIf="currentServiceId == 12 ">
+                            <ng-container *ngIf="currentServiceId == 12">
                               <div class="col-2">
                                 <strong
                                   >Your Password will be email to:
                                 </strong>
                                 <br />
-                                <p>{{userManagers?.manager1Email}}</p>
+                                <p>{{ userManagers?.manager1Email }}</p>
                               </div>
                             </ng-container>
                             <!-- managers email ends -->
@@ -857,13 +1010,13 @@
 
                         <h4
                           class="rev-step-head"
-                          *ngIf="currentServiceId != 12 "
+                          *ngIf="currentServiceId != 12"
                         >
-                          {{requestFormData?.serviceSteps?.length}}. {{
-                          'request_workflow' | translate }}
+                          {{ requestFormData?.serviceSteps?.length }}. {{
+                          "request_workflow" | translate }}
                         </h4>
 
-                        <ng-container *ngIf="wfSpinner ;else showWf  ">
+                        <ng-container *ngIf="wfSpinner; else showWf">
                           <app-loader-skeleton
                             [skeletonType]="'requestActions'"
                           ></app-loader-skeleton>
@@ -877,7 +1030,10 @@
                               <div class="large-12 columns line-manager">
                                 <owl-carousel-o [options]="customOptions">
                                   <ng-container
-                                    *ngFor="let role of requestWorkflow; let ind = index"
+                                    *ngFor="
+                                      let role of requestWorkflow;
+                                      let ind = index
+                                    "
                                   >
                                     <ng-template
                                       carouselSlide
@@ -889,8 +1045,8 @@
                                           class="col-xxl-12 col-lg-12 col-md-12 col-12 itm-padding"
                                         >
                                           <p class="itm-txt-min-h">
-                                            {{applicationLang == 'en' ?
-                                            role.roleNameEn : role.roleNameAr}}
+                                            {{ applicationLang == "en" ?
+                                            role.roleNameEn : role.roleNameAr }}
                                           </p>
                                           <div class="progress-bar-container">
                                             <div
@@ -905,10 +1061,13 @@
                                           >
                                             <span
                                               class="row"
-                                              *ngFor="let user of role.users; let ind = index"
+                                              *ngFor="
+                                                let user of role.users;
+                                                let ind = index
+                                              "
                                             >
-                                              {{user.employeeName}} |
-                                              {{user.employeePosition}}
+                                              {{ user.employeeName }} | {{
+                                              user.employeePosition }}
                                             </span>
                                           </p>
                                         </div>
@@ -922,16 +1081,22 @@
                         </ng-template>
 
                         <div
-                          *ngIf="requestFormData?.serviceInfo || requestFormData?.serviceInfoAr"
+                          *ngIf="
+                            requestFormData?.serviceInfo ||
+                            requestFormData?.serviceInfoAr
+                          "
                         >
                           <ng-container
-                            *ngFor="let step of requestFormData?.serviceSteps; let ind = index"
+                            *ngFor="
+                              let step of requestFormData?.serviceSteps;
+                              let ind = index
+                            "
                           >
                             <ng-container
                               *ngIf="step.nameEn.toLowerCase() !== 'review'"
                             >
                               <h4 class="rev-step-head">
-                                2. {{'pass_policy' | translate}}
+                                2. {{ "pass_policy" | translate }}
                               </h4>
                               <p
                                 [innerHTML]="requestFormData?.serviceInfo"
@@ -961,7 +1126,7 @@
                         class="col-xxl-6 col-md-6 col-sm-6 col-xs-6 col-6 itm-forgot"
                       >
                         <ng-container
-                          *ngIf="activeStepIndex == (serviceSteps?.length! - 1)"
+                          *ngIf="activeStepIndex == serviceSteps?.length! - 1"
                         >
                           <input
                             type="checkbox"
@@ -970,13 +1135,13 @@
                           />
                           &nbsp;
                           <label for="terms_check"
-                            >{{'read_tc' | translate}}</label
+                            >{{ "read_tc" | translate }}</label
                           >
                           <span
                             ><a
                               href="javascript:void(0)"
                               (click)="showTermsConditions = true"
-                              >{{'terms_cond' | translate}}</a
+                              >{{ "terms_cond" | translate }}</a
                             ></span
                           >
                         </ng-container>
@@ -992,7 +1157,7 @@
                             type="button"
                             [routerLink]="['/user/dashboard']"
                           >
-                            {{'cancel' | translate}}
+                            {{ "cancel" | translate }}
                           </button>
                           &nbsp;
                           <button
@@ -1001,20 +1166,22 @@
                             [disabled]="activeStepIndex == 0"
                             (click)="onPreviousStep()"
                           >
-                            {{'previous' | translate }}
+                            {{ "previous" | translate }}
                           </button>
                           &nbsp;
 
                           <button
                             class="btn req-btn btn-secondary rounded-0"
                             type="button"
-                            [hidden]="activeStepIndex == (serviceSteps!.length - 1)"
+                            [hidden]="
+                              activeStepIndex == serviceSteps!.length - 1
+                            "
                             [pTooltip]="getToolTipMsg()"
                             tooltipPosition="top"
                             (click)="onNextStep()"
-                            [disabled]="errorMessage != '' "
+                            [disabled]="errorMessage != ''"
                           >
-                            {{'next' | translate}}
+                            {{ "next" | translate }}
                           </button>
 
                           <!-- show below button on last step only  -->
@@ -1024,14 +1191,20 @@
                             tooltipPosition="top"
                           >
                             <button
-                              *ngIf="activeStepIndex == (serviceSteps?.length! - 1)"
+                              *ngIf="
+                                activeStepIndex == serviceSteps?.length! - 1
+                              "
                               style="margin-top: 18px"
                               (click)="onRequestSave()"
                               class="btn approve-btn rounded-0"
                               type="button"
-                              [disabled]="showSaveRequestLoader || !termsAccepted || errorMessage != ''"
+                              [disabled]="
+                                showSaveRequestLoader ||
+                                !termsAccepted ||
+                                errorMessage != ''
+                              "
                             >
-                              {{'submit_btn_txt' | translate}}
+                              {{ "submit_btn_txt" | translate }}
 
                               <div
                                 *ngIf="showSaveRequestLoader"
@@ -1064,8 +1237,8 @@
 
   <p-dialog
     [(visible)]="showTermsConditions"
-    [style]="{width: '600px'}"
-    header="{{'terms_cond' | translate }}"
+    [style]="{ width: '600px' }"
+    header="{{ 'terms_cond' | translate }}"
     [modal]="true"
     [closable]="true"
     styleClass="p-fluid"
@@ -1084,7 +1257,7 @@
         class="btn req-btn btn-secondary rounded-0"
         type="button"
       >
-        {{'OK' | translate }}
+        {{ "OK" | translate }}
       </button>
     </ng-template>
   </p-dialog>
