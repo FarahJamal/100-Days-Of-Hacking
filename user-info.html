@@ -1,0 +1,1273 @@
+<p-toast *ngIf="applicationLang == 'en'"></p-toast>
+
+<p-toast position="top-left" *ngIf="applicationLang == 'ar'"></p-toast>
+<p-blockUI [blocked]="submitted || fileUploadSpinner">
+  <p-progressSpinner strokeWidth="4" aria-label="Loading"></p-progressSpinner>
+</p-blockUI>
+
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper mt-na15">
+  <!-- Main content -->
+  <div class="container-fluid itg-plr">
+    <div class="row">
+      <div class="col-lg-12 col-sm-12">
+        <div class="dashboardContent">
+          <div class="row">
+            <!-- main left section -->
+            <div class="col-lg-12 col-sm-12">
+              <div class="row no-gutters">
+                <div class="col-lg-8 col-md-12 col-sm-12 col-12 mt-2">
+                  <div class="card-body itg-teambox">
+                    <div class="row" *ngIf="requestBasicInfo?.serviceNameEn">
+                      <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                        <h4 class="mt-3 mb-2">
+                          {{ requestBasicInfo?.serviceNameEn }}
+                        </h4>
+                        <p>
+                          Ref. no.: {{ requestBasicInfo?.referenceNumber }}
+                          <img
+                            style="cursor: pointer"
+                            (click)="
+                              copyText(requestBasicInfo?.referenceNumber)
+                            "
+                            src="assets/images/icons/file.svg"
+                          />
+                        </p>
+                        <p>
+                          Submitted by : {{ requestBasicInfo?.employeeName }}
+                        </p>
+                        <p>
+                          Created on:
+                          {{ requestBasicInfo?.createdOn | date : "medium" }}
+                        </p>
+                      </div>
+                      <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                        <a (click)="showRequestHistory = true">
+                          <p class="itgsresult float-end text-underline">
+                            {{ "prev_reqs" | translate }} ({{
+                              requestHistory.length
+                            }}) <img src="assets/images/icons/arrow-left.svg" />
+                          </p>
+                        </a>
+                      </div>
+                    </div>
+
+                    <app-loader-skeleton
+                      *ngIf="!requestBasicInfo?.serviceNameEn"
+                      [skeletonType]="'reqBasicInfo'"
+                    ></app-loader-skeleton>
+                  </div>
+
+                  <div class="card-body itg-teambox mt-3">
+                    <div class="row" *ngIf="loadRequestDetail">
+                      <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                        <h4>{{ "emp_info" | translate }}</h4>
+                        <!-- <h6 class="mt-3 mb-2">{{requestBasicInfo?.employeeName}}</h6> -->
+
+                        <p *ngFor="let field of requestDetail?.user">
+                          {{
+                            applicationLang == "en"
+                              ? field.labelEn
+                              : field.labelAr
+                          }}:
+                          {{ field.value ? field.value : "- - -" }}
+                        </p>
+                      </div>
+                      <div class="col-lg-6 col-md-6 col-sm-6 col-6"></div>
+                    </div>
+                    <app-loader-skeleton
+                      *ngIf="!loadRequestDetail"
+                      [skeletonType]="'reqDetail'"
+                    ></app-loader-skeleton>
+                  </div>
+
+                  <div class="card-body mt-3 itg-teambox itg-trafscroll">
+                    <div class="row" *ngIf="loadRequestDetail">
+                      <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                          <li class="nav-item" role="presentation">
+                            <button
+                              class="nav-link active"
+                              id="home-tab"
+                              data-bs-toggle="tab"
+                              data-bs-target="#home"
+                              type="button"
+                              role="tab"
+                              aria-controls="home"
+                              aria-selected="true"
+                            >
+                              {{ requestBasicInfo?.serviceNameEn }}
+                            </button>
+                          </li>
+                          <li class="nav-item" role="presentation">
+                            <button
+                              class="nav-link"
+                              id="profile-tab"
+                              data-bs-toggle="tab"
+                              data-bs-target="#profile"
+                              type="button"
+                              role="tab"
+                              aria-controls="profile"
+                              aria-selected="false"
+                            >
+                              Attachments
+                            </button>
+                          </li>
+                        </ul>
+                        <div class="tab-content" id="myTabContent">
+                          <!-- request detail tab starts -->
+                          <div
+                            class="tab-pane fade show active"
+                            id="home"
+                            role="tabpanel"
+                            aria-labelledby="home-tab"
+                          >
+                            <div
+                              class="row mt-3"
+                              *ngIf="
+                                requestBasicInfo?.serviceId != 8 &&
+                                requestBasicInfo?.serviceId != 36 &&
+                                requestBasicInfo?.serviceId != 18
+                              "
+                            >
+                              <div
+                                class="col-lg-6 col-md-6 col-sm-6 col-6"
+                                *ngFor="let field of requestDetail?.request"
+                              >
+                                <ng-container
+                                  *ngIf="
+                                    field.controlType != 'browse' &&
+                                    field.key != 'sharefolderprivilege'
+                                  "
+                                >
+                                  <h6>
+                                    {{
+                                      applicationLang == "en"
+                                        ? field.labelEn
+                                        : field.labelAr
+                                    }}:
+                                  </h6>
+                                  <p
+                                    *ngIf="
+                                      field.controlType != 'date' &&
+                                      field.controlType != 'datetime'
+                                    "
+                                    style="
+                                      margin-bottom: 15px;
+                                      word-break: break-word;
+                                    "
+                                  >
+                                    {{ field.value ? field.value : "- - -" }}
+                                  </p>
+                                  <p
+                                    *ngIf="
+                                      field.controlType == 'date' ||
+                                      field.controlType == 'datetime'
+                                    "
+                                    style="
+                                      margin-bottom: 15px;
+                                      word-break: break-word;
+                                    "
+                                    [innerText]="
+                                      field.value
+                                        ? (field.value | date : 'medium')
+                                        : '---'
+                                    "
+                                  ></p>
+                                </ng-container>
+
+                                <ng-container
+                                  *ngIf="
+                                    field.key == 'sharefolderprivilege' &&
+                                    requestBasicInfo?.serviceId == 14
+                                  "
+                                >
+                                  <div class="">
+                                    <h6>Pickup User</h6>
+                                    <table class="table itg-pd">
+                                      <thead>
+                                        <th>User</th>
+                                        <th>Read</th>
+                                        <th>Write</th>
+                                      </thead>
+                                      <tbody>
+                                        <tr *ngFor="let user of field.value">
+                                          <td>{{ user.name }}</td>
+                                          <td>
+                                            {{ user.canread ? "✔" : "❌" }}
+                                          </td>
+                                          <td>
+                                            {{ user.canwrite ? "✔" : "❌" }}
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                </ng-container>
+                              </div>
+                            </div>
+                            <ng-container
+                              *ngIf="
+                                requestBasicInfo?.serviceId == 54 &&
+                                requestJson?.noofpos?.length > 0
+                              "
+                            >
+                              <div class="col-12">
+                                <table
+                                  class="table table-stripped role-priv-tbl"
+                                >
+                                  <thead>
+                                    <th>Corresponding PO</th>
+                                    <th>Corresponding Entity</th>
+                                    <th>Attachment</th>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      *ngFor="let each of requestJson?.noofpos"
+                                    >
+                                      <td>{{ each.correspondingpo }}</td>
+                                      <td>
+                                        {{ each.correspondingentitytext }}
+                                      </td>
+                                      <td
+                                        [innerHTML]="
+                                          getAttachmentLink(
+                                            each.attachmenturl[0]
+                                          )
+                                        "
+                                      ></td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </ng-container>
+                            <app-vida-info
+                              *ngIf="
+                                requestBasicInfo?.serviceId == 8 ||
+                                requestBasicInfo?.serviceId == 18
+                              "
+                              [requestInfo]="vidaTrafJson"
+                            ></app-vida-info>
+                            <app-traf-info
+                              *ngIf="requestBasicInfo?.serviceId == 36"
+                              [requestInfo]="vidaTrafJson"
+                            ></app-traf-info>
+                          </div>
+                          <!-- request detail tab ends -->
+
+                          <!-- request attachments tab starts -->
+
+                          <div
+                            class="tab-pane fade"
+                            id="profile"
+                            role="tabpanel"
+                            aria-labelledby="profile-tab"
+                          >
+                            <h4 class="mt-3 mb-4">
+                              {{ "attachments" | translate }}
+                            </h4>
+
+                            <ng-container
+                              *ngIf="
+                                requestDetail?.attachments?.length;
+                                else noAttach
+                              "
+                            >
+                              <div
+                                class="image-row"
+                                *ngFor="let file of requestDetail?.attachments"
+                              >
+                                <a
+                                  [href]="domain + file.filePath"
+                                  target="_blank"
+                                  title="{{ file.fileName }}"
+                                >
+                                  <div class="image-container">
+                                    <img
+                                      [src]="getFileIconUrl(file.filePath)"
+                                      alt="file icon"
+                                    />
+                                    <span class="image-label">{{
+                                      file.fileName
+                                    }}</span>
+                                  </div>
+                                </a>
+                              </div>
+
+                              <!-- <div class="">
+                                                                <p class="file-links"
+                                                                    [innerHTML]="getRequestFilesPath(requestDetail?.attachments)">
+                                                                </p>
+                                                            </div> -->
+                            </ng-container>
+
+                            <ng-template #noAttach>
+                              <p>No Attachment available</p>
+                            </ng-template>
+
+                            <!-- <img src="assets/images/icons/pdf.svg" width="120"> -->
+                          </div>
+                          <!-- request attachments tab ends -->
+                        </div>
+                      </div>
+                    </div>
+                    <app-loader-skeleton
+                      *ngIf="!loadRequestDetail"
+                      [skeletonType]="'reqDetailTabs'"
+                    ></app-loader-skeleton>
+                  </div>
+
+                  <!-- last stage forms section starts -->
+                  <!-- For incomplete email group reqs -->
+                  <div
+                    class="card-body mt-3 itg-teambox itg-trafscroll"
+                    *ngIf="
+                      requestBasicInfo &&
+                      (requestBasicInfo?.isLastStage ||
+                        requestBasicInfo?.serviceId == 51) &&
+                      showActionBtns &&
+                      (requestBasicInfo?.serviceId == 1 ||
+                        requestBasicInfo?.serviceId == 2 ||
+                        requestBasicInfo?.serviceId == 38 ||
+                        requestBasicInfo?.serviceId == 11 ||
+                        (requestBasicInfo?.serviceId == 51 &&
+                          isCurrentUserSNSAccountManager()))
+                    "
+                  >
+                    <!-- show following section in last step of pending email groups reqs for editing group name  -->
+                    <ng-container
+                      *ngIf="
+                        requestBasicInfo?.serviceId == 11 &&
+                        requestBasicInfo?.isLastStage &&
+                        requestBasicInfo?.requestStatusId == 1 &&
+                        showActionBtns
+                      "
+                    >
+                      <h4 class="rev-step-head">
+                        Update Email Group Name (Optional)
+                      </h4>
+                      <div class="row mt-3">
+                        <div
+                          class="col-xxl-6 col-md-6 itm-pos-rel itm-input-staff mb-4"
+                        >
+                          <label for="groupname" class="form-label"
+                            >New Email Group Name</label
+                          >
+                          <input
+                            [(ngModel)]="updatedGroupName"
+                            type="text"
+                            class="form-control"
+                            id="groupname"
+                            placeholder="Email Group..."
+                          />
+                        </div>
+                      </div>
+                    </ng-container>
+
+                    <!-- Exhange Active Directory Section starts -->
+
+                    <!-- for incomplete email and add new staff reqs -->
+                    <!-- show following section in last step of pending email reqs and new staff reqs  -->
+                    <ng-container
+                      *ngIf="
+                        (requestBasicInfo?.serviceId == 38 ||
+                          requestBasicInfo?.serviceId == 2) &&
+                        requestBasicInfo?.isLastStage &&
+                        requestBasicInfo?.requestStatusId == 1 &&
+                        showActionBtns
+                      "
+                    >
+                      <h4 class="rev-step-head">
+                        {{ "ad_heading" | translate }}
+                      </h4>
+                      <app-ad-exchange-config
+                        #adExchangeComp
+                        [serviceId]="requestBasicInfo?.serviceId"
+                        [empFullName]="employeeName"
+                      ></app-ad-exchange-config>
+                    </ng-container>
+
+                    <!-- for incomplete internet reqs -->
+                    <!-- show following section in last step of pending internet reqs  -->
+                    <ng-container
+                      *ngIf="
+                        requestBasicInfo?.serviceId == 1 &&
+                        requestBasicInfo?.isLastStage &&
+                        requestBasicInfo?.requestStatusId == 1 &&
+                        showActionBtns
+                      "
+                    >
+                      <h4 class="rev-step-head">
+                        {{ "internet_ad_group" | translate }}
+                      </h4>
+                      <app-internet-ad-group
+                        #adInterComp
+                      ></app-internet-ad-group>
+                    </ng-container>
+
+                    <!-- Exhange Active Directory Section ends -->
+
+                    <!-- Timesheet Invoice attachement form starts  -->
+                    <div
+                      class="row"
+                      *ngIf="
+                        requestBasicInfo?.serviceId == 51 &&
+                        isCurrentUserSNSAccountManager()
+                      "
+                    >
+                      <h4 class="rev-step-head">
+                        {{ "attachments" | translate }}
+                      </h4>
+
+                      <div
+                        class="col-xxl-6 col-md-6 itm-pos-rel itm-input-staff mb-4 date-calendar file-upload"
+                      >
+                        <span class="invalid-txt">*</span>
+                        <label for="invoice" class="form-label">
+                          {{ "invoice_attachment" | translate }}
+                        </label>
+                        <br />
+
+                        <p-fileUpload
+                          #fileInput
+                          [multiple]="true"
+                          [customUpload]="true"
+                          (uploadHandler)="onFileUpload($event, 'invoice')"
+                          (onSelect)="onFileUpload($event, 'invoice')"
+                          [showUploadButton]="false"
+                          [showCancelButton]="false"
+                          chooseLabel="{{ 'choose_new' | translate }}"
+                          uploadLabel="{{ 'upload' | translate }}"
+                          accept=".pdf,.png,.jpg,.jpeg"
+                        >
+                          <ng-template pTemplate="content">
+                            <div *ngIf="invoiceAttachments?.length">
+                              <Strong>{{ "current_files" | translate }}</Strong>
+                              <br />
+
+                              <ng-container
+                                *ngFor="let file of invoiceAttachments"
+                              >
+                                <span
+                                  [innerHTML]="getSingleAttachmentInfo(file)"
+                                ></span>
+                                <i
+                                  class="pi pi-trash rem-file"
+                                  (click)="onDeleteFile(file, 'invoice')"
+                                ></i>
+                                <hr />
+                              </ng-container>
+                            </div>
+                          </ng-template>
+                        </p-fileUpload>
+
+                        <small
+                          class="invalid-txt"
+                          *ngIf="
+                            showfileUploadValidation &&
+                            !invoiceAttachments?.length
+                          "
+                        >
+                          {{ "file_upload_valiation" | translate }}
+                          {{ "mandatory_txt" | translate }}
+                        </small>
+                      </div>
+
+                      <div
+                        class="col-xxl-6 col-md-6 itm-pos-rel itm-input-staff mb-4 date-calendar file-upload"
+                      >
+                        <!-- <span class="invalid-txt">*</span> -->
+                        <label for="poitem" class="form-label">PO Items </label>
+                        <br />
+
+                        <p-fileUpload
+                          #fileInput
+                          [multiple]="true"
+                          [customUpload]="true"
+                          (uploadHandler)="onFileUpload($event, 'poItem')"
+                          (onSelect)="onFileUpload($event, 'poItem')"
+                          [showUploadButton]="false"
+                          [showCancelButton]="false"
+                          chooseLabel="{{ 'choose_new' | translate }}"
+                          uploadLabel="{{ 'upload' | translate }}"
+                          accept=".pdf,.png,.jpg,.jpeg"
+                        >
+                          <ng-template pTemplate="content">
+                            <div *ngIf="poItemsAttachments?.length">
+                              <Strong>{{ "current_files" | translate }}</Strong>
+                              <br />
+
+                              <ng-container
+                                *ngFor="let file of poItemsAttachments"
+                              >
+                                <span
+                                  [innerHTML]="getSingleAttachmentInfo(file)"
+                                ></span>
+                                <i
+                                  class="pi pi-trash rem-file"
+                                  (click)="onDeleteFile(file, 'poItem')"
+                                ></i>
+                                <hr />
+                              </ng-container>
+                            </div>
+                          </ng-template>
+                        </p-fileUpload>
+                      </div>
+                      <div
+                        class="col-xxl-6 col-md-6 itm-pos-rel itm-input-staff mb-4 date-calendar file-upload"
+                      >
+                        <span class="invalid-txt">*</span>
+                        <label for="po-Number" class="form-label"
+                          >Invoice Number
+                        </label>
+                        <br />
+
+                        <input
+                          [(ngModel)]="invoiceNumber"
+                          type="text"
+                          class="form-control"
+                          id="po-Number"
+                          placeholder="Add Invoice Number..."
+                        />
+                        <small
+                          class="invalid-txt"
+                          *ngIf="showInvoiceNumberValidation && !invoiceNumber"
+                        >
+                          Invoice Number is required Field
+                        </small>
+                      </div>
+                      <!-- <div
+                                                class="col-xxl-6 col-md-6 itm-pos-rel itm-input-staff  mb-4 date-calendar file-upload">
+                                                <span class="invalid-txt">*</span>
+                                                <label for="po-Number" class="form-label">Invoice Date </label> <br>
+
+                                                <p-calendar [(ngModel)]="invoiceDate" [style]="{'width':'100%'}"
+                                                    placeholder="MM/DD/YYYY" [showIcon]="true"
+                                                    [showTime]="false"></p-calendar>
+
+                                                <small class="invalid-txt"
+                                                    *ngIf="showInvoiceDateValidation  && !invoiceDate">
+                                                    Invoice Date is required Field
+                                                </small>
+
+                                            </div> -->
+
+                      <div
+                        class="col-xxl-6 col-md-6 itm-pos-rel itm-input-staff mb-4 date-calendar file-upload"
+                      >
+                        <label for="po-Number" class="form-label"
+                          >Currency
+                        </label>
+                        <br />
+
+                        <p-dropdown
+                          [(ngModel)]="invoiceCurrency"
+                          [style]="{ width: '100%' }"
+                          [ngModelOptions]="{ standalone: true }"
+                          [options]="currencies"
+                          optionLabel="nameEn"
+                          optionValue="id"
+                          [readonly]="true"
+                          placeholder="Select a currency"
+                        ></p-dropdown>
+                      </div>
+                      <div
+                        class="col-xxl-6 col-md-6 itm-pos-rel itm-input-staff mb-4 date-calendar file-upload"
+                      >
+                        <span class="invalid-txt">*</span>
+                        <label for="po-Number" class="form-label"
+                          >Invoice Amount
+                        </label>
+                        <br />
+
+                        <input
+                          [(ngModel)]="invoiceAmount"
+                          type="number"
+                          class="form-control"
+                          id="po-Number"
+                          placeholder="Invoice Amount"
+                        />
+                        <small
+                          class="invalid-txt"
+                          *ngIf="showInvoiceAmountValidation && !invoiceAmount"
+                        >
+                          Invoice Amount is required Field
+                        </small>
+                      </div>
+                      <div
+                        class="col-xxl-6 col-md-6 itm-pos-rel itm-input-staff mb-4 date-calendar file-upload"
+                      >
+                        <span class="invalid-txt">*</span>
+                        <label for="po-Number" class="form-label"
+                          >PO Number
+                        </label>
+                        <br />
+
+                        <input
+                          [(ngModel)]="poNumber"
+                          type="text"
+                          class="form-control"
+                          id="po-Number"
+                          placeholder="Add PO Number..."
+                        />
+                      </div>
+                    </div>
+
+                    <!-- Timesheet Invoice attachement form ends -->
+
+                    <!-- last stage forms section ends -->
+                  </div>
+                </div>
+
+                <div
+                  class="col-lg-4 col-md-12 col-sm-12 col-12 mt-2 itg-aplevel"
+                >
+                  <div class="card-body">
+                    <h2>Approval Level</h2>
+                    <div
+                      class="timeline-alt py-0"
+                      *ngIf="requestWorkflow?.length"
+                    >
+                      <div
+                        class="timeline-item"
+                        *ngFor="
+                          let user of requestWorkflow;
+                          let rowIndex = index
+                        "
+                      >
+                        <i
+                          *ngIf="user.action == 'Submitted'"
+                          class="fa fa-check timeline-icon"
+                          aria-hidden="true"
+                        ></i>
+                        <i
+                          *ngIf="
+                            user.action == 'Approved' ||
+                            user.action == 'Auto Approved' ||
+                            user.action == 'Doable'
+                          "
+                          class="fa fa-check timeline-icon timeline-icon2"
+                          aria-hidden="true"
+                        ></i>
+                        <i
+                          *ngIf="user.action == 'Pending'"
+                          class="timeline-icon timeline-icon3"
+                          aria-hidden="true"
+                          ><img
+                            src="assets/images/icons/waiting.svg"
+                            width="12"
+                        /></i>
+                        <i
+                          *ngIf="user.action == 'Waiting'"
+                          class="timeline-icon timeline-icon4"
+                          aria-hidden="true"
+                        >
+                          <img
+                            src="assets/images/icons/waiting.svg"
+                            width="12"
+                          />
+                        </i>
+                        <i
+                          *ngIf="
+                            user.action == 'Reject' ||
+                            user.action == 'Cancel' ||
+                            user.action == 'Not Doable' ||
+                            user.action == 'Auto Cancel'
+                          "
+                          class="fa fa-times timeline-icon timeline-icon5"
+                          aria-hidden="true"
+                        ></i>
+                        <i
+                          *ngIf="user.action == 'Delegate'"
+                          class="fa fa-check timeline-icon timeline-icon6"
+                          aria-hidden="true"
+                        ></i>
+                        <i
+                          *ngIf="user.action == 'Request Information'"
+                          class="fa fa-check timeline-icon timeline-icon7"
+                          aria-hidden="true"
+                        ></i>
+                        <i
+                          *ngIf="user.action == 'Answer'"
+                          class="fa fa-check timeline-icon timeline-icon8"
+                          aria-hidden="true"
+                        ></i>
+
+                        <div class="row">
+                          <div class="col-7">
+                            <h6 class="mb-0">
+                              {{
+                                user.users?.length > 1
+                                  ? user.approvalLevel
+                                  : user.userName
+                              }}
+                            </h6>
+
+                            <span *ngIf="applicationLang == 'en'">
+                              {{
+                                user.action == "Submitted" ||
+                                user.action == "Cancel"
+                                  ? "Requester"
+                                  : user.roleNameEn
+                              }}</span
+                            >
+                            <span *ngIf="applicationLang == 'ar'">
+                              {{
+                                user.action == "Submitted" ||
+                                user.action == "Cancel"
+                                  ? "الطالب"
+                                  : user.roleNameAr
+                              }}</span
+                            >
+
+                            <span
+                              [ngStyle]="{
+                                float:
+                                  applicationLang == 'en' ? 'right' : 'left'
+                              }"
+                              ><p-badge
+                                [style]="{ cursor: 'pointer', color: '#fff' }"
+                                *ngIf="user.users?.length > 1"
+                                value="{{ user.users?.length }}"
+                                (click)="viewMembers(user)"
+                              ></p-badge
+                            ></span>
+                            <p>{{ user.reason }}</p>
+                          </div>
+                          <div class="col-5 time-mention">
+                            <span
+                              class="traf-timedbtn"
+                              [ngClass]="{
+                                'itg-greenapp':
+                                  user.action == 'Approved' ||
+                                  user.action == 'Auto Approved' ||
+                                  user.action == 'Doable',
+                                'itg-yellowapp': user.action == 'Pending',
+                                'itg-blueapp': user.action == 'Delegate',
+                                'itg-purpleapp':
+                                  user.action == 'Request Information',
+                                'itg-greenapp1': user.action == 'Answer',
+                                'itg-grayapp': user.action == 'Waiting',
+                                'itg-redapp':
+                                  user.action == 'Reject' ||
+                                  user.action == 'Cancel' ||
+                                  user.action == 'Not Doable' ||
+                                  user.action == 'Auto Cancel'
+                              }"
+                              >{{ user.action }}</span
+                            >
+                            <p>{{ user.date | date : "medium" }}</p>
+
+                            <span
+                              *ngIf="user.action == 'Waiting'"
+                              class="itm-rem-time"
+                            ></span>
+                            <span
+                              *ngIf="user.action == 'Pending'"
+                              class="itm-rem-time pending-color"
+                            >
+                              {{ getPendingSinceTime(user, rowIndex) }}
+                            </span>
+                            <span
+                              class="itm-rem-time"
+                              *ngIf="
+                                user.action != 'Pending' &&
+                                user.action != 'Waiting'
+                              "
+                              >{{ getActionDuration(user, rowIndex) }}</span
+                            >
+                          </div>
+
+                          <div class="row">
+                            <div class="col-12 mt-3 itg-bgdr">
+                              <ng-container
+                                *ngIf="showActionById(4); else stopReqInfo"
+                              >
+                                <a
+                                  class="btn btnrd"
+                                  (click)="
+                                    employeeSelectedFor = 'requestInformation';
+                                    user.users?.length > 1
+                                      ? openEmployeeSearchPopup('reqInfo')
+                                      : onEmployeeSearchClose(user)
+                                  "
+                                >
+                                  <img
+                                    src="assets/images/icons/requestinfo.svg"
+                                  />
+                                  Request more info</a
+                                >
+                              </ng-container>
+                              <ng-template #stopReqInfo>
+                                <a class="btn btnrd w-100 disabled-grey">
+                                  <img
+                                    src="assets/images/icons/requestinfo_gr.svg"
+                                  />
+                                  Request more info
+                                </a>
+                              </ng-template>
+
+                              <ng-container
+                                *ngIf="
+                                  showActionById(1) &&
+                                    user.action != 'Submitted';
+                                  else stopDelegate
+                                "
+                              >
+                                <span></span>
+                                <a
+                                  class="btn btnrd w-100"
+                                  (click)="
+                                    employeeSelectedFor = 'delegation';
+                                    onEmployeeSearchClose(user)
+                                  "
+                                >
+                                  <img src="assets/images/icons/Delegate.svg" />
+                                  Delegate request</a
+                                >
+                              </ng-container>
+                              <ng-template #stopDelegate>
+                                <span></span>
+                                <a class="btn btnrd w-100 disabled-grey">
+                                  <img
+                                    src="assets/images/icons/Delegate_gr.svg"
+                                  />
+                                  Delegate request</a
+                                >
+                              </ng-template>
+                            </div>
+                          </div>
+                          <hr class="timeborder" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <app-loader-skeleton
+                      *ngIf="!requestWorkflow?.length"
+                      [skeletonType]="'reqNewWorkflow'"
+                    ></app-loader-skeleton>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- main left section -->
+          </div>
+
+          <!---main content box -->
+        </div>
+      </div>
+    </div>
+    <!--Main content-->
+  </div>
+
+  <!-- /.content-wrapper -->
+
+  <div class="itg-fixed" *ngIf="showActionBtns || showCancelBtn()">
+    <div class="row justify-content-end" *ngIf="showActionBtns">
+      <div
+        class="col-lg-2 col-md-4 col-sm-3 col-6 mtbtn"
+        *ngIf="showActionById(1)"
+      >
+        <button
+          class="itgbg-black w-100"
+          (click)="openEmployeeSearchPopup('delegate')"
+        >
+          {{ "delegate_btn_txt" | translate }}
+        </button>
+      </div>
+      <div
+        class="col-lg-2 col-md-4 col-sm-3 col-6 mtbtn"
+        *ngIf="showActionById(4)"
+      >
+        <button
+          class="itgbg-black w-100"
+          (click)="openEmployeeSearchPopup('reqInfo')"
+        >
+          {{ "req_info_btn_txt" | translate }}
+        </button>
+      </div>
+
+      <div class="col-lg-4 col-md-4 d-md-block d-sm-none col-sm-1 col-12"></div>
+
+      <div
+        class="col-lg-2 col-md-4 col-sm-3 col-6 mtbtn"
+        *ngIf="showActionById(2)"
+      >
+        <button class="itgbg-reject w-100" (click)="askRejectReason = true">
+          {{ "reject_btn_txt" | translate }}
+        </button>
+      </div>
+      <div
+        class="col-lg-2 col-md-4 col-sm-3 col-6 mtbtn"
+        *ngIf="showActionById(3)"
+      >
+        <button class="itgbg-approved w-100" (click)="onApproveBtnClick()">
+          {{ "approve_btn_txt" | translate }}
+        </button>
+      </div>
+
+      <div
+        class="col-lg-2 col-md-4 col-sm-3 col-6 mtbtn"
+        *ngIf="showActionById(10)"
+      >
+        <button class="itgbg-black w-100" (click)="onGenerateQrCode()">
+          {{ "qr_btn_txt" | translate }}
+        </button>
+      </div>
+
+      <div
+        class="col-lg-2 col-md-4 col-sm-3 col-6 mtbtn"
+        *ngIf="showActionById(11)"
+      >
+        <button class="itgbg-black w-100" (click)="onRemoveMohemmDevice()">
+          {{ "rem_device_btn_txt" | translate }}
+        </button>
+      </div>
+
+      <div
+        class="col-lg-2 col-md-4 col-sm-3 col-6 mtbtn"
+        *ngIf="showActionById(12)"
+      >
+        <button class="itgbg-black w-100" (click)="onIncludeExcludeDoctor()">
+          {{ "include_exclude_btn_txt" | translate }}
+        </button>
+      </div>
+
+      <div
+        class="col-lg-2 col-md-4 col-sm-3 col-6 mtbtn"
+        *ngIf="showActionById(9)"
+      >
+        <button class="itgbg-reject w-100" (click)="askRejectReason = true">
+          {{ "not_doable_btn_txt" | translate }}
+        </button>
+      </div>
+      <div
+        class="col-lg-2 col-md-4 col-sm-3 col-6 mtbtn"
+        *ngIf="showActionById(8)"
+      >
+        <button class="itgbg-approved w-100" (click)="askApprovalNotes = true">
+          {{ "doable_btn_txt" | translate }}
+        </button>
+      </div>
+
+      <div
+        class="col-lg-2 col-md-4 col-sm-3 col-6 mtbtn"
+        *ngIf="showActionById(5)"
+      >
+        <button class="itgbg-approved w-100" (click)="askRequestAnswer = true">
+          {{ "ans_btn_txt" | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="row justify-content-end" *ngIf="showCancelBtn()">
+      <div
+        class="col-lg-10 col-md-10 d-md-block d-sm-none col-sm-1 col-12"
+      ></div>
+      <div class="col-lg-2 col-md-4 col-sm-3 col-6 mtbtn">
+        <button class="itgbg-reject w-100" (click)="onCancelRequest()">
+          {{ "cancel_btn_txt" | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- wrapper -->
+
+  <!-- Dialog Modal section starts -->
+
+  <p-dialog
+    [(visible)]="showTeamMembers"
+    [style]="{ width: '650px' }"
+    header="{{ selectedRole }} - Members"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="filed">
+        <table class="table table-bordered table-stripped">
+          <thead>
+            <tr>
+              <th>Employee Number</th>
+              <th>Employee Name</th>
+              <!-- <th>Employee Email</th> -->
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let user of teamMembers"
+              [ngClass]="{
+                'itm-bg-success':
+                  user.action == 'Approved' ||
+                  user.action == 'Doable' ||
+                  user.action == 'Submitted',
+                'itm-bg-danger':
+                  user.action == 'Reject' || user.action == 'Not Doable',
+                'itm-bg-delegate': user.action == 'Delegate',
+                'itm-bg-req-info': user.action == 'RequestInfo',
+                'itm-bg-ans': user.action == 'Answer'
+              }"
+            >
+              <td>{{ user.employeeNumber }}</td>
+              <td>{{ user.employeeName }}</td>
+              <!-- <td>{{member.email}}</td> -->
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <app-employee-search
+    *ngIf="showDelegateModal"
+    (closeSearch)="onEmployeeSearchClose($event)"
+    [btnText]="empBtnText"
+    [wfUsers]="workflowUsers"
+  >
+  </app-employee-search>
+
+  <p-dialog
+    [(visible)]="askRejectReason"
+    [style]="{ width: '550px' }"
+    header="{{ 'reason_header' | translate }}"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="filed">
+        <p>
+          <span class="invalid-txt">*</span> {{ "reason_note" | translate }}
+        </p>
+        <br />
+        <textarea
+          [(ngModel)]="rejectReason"
+          placeholder="{{ 'reason_ph' | translate }}"
+          class="form-control rounded-0"
+          rows="5"
+        ></textarea>
+        <small
+          *ngIf="showModalValidation && !rejectReason"
+          class="invalid-txt"
+          >{{ modalValidationMsg }}</small
+        >
+        <br />
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <br />
+      <div class="itg-fixed">
+        <button class="itgbg-reject" (click)="onRequestReject()">
+          {{ "submit" | translate }}
+        </button>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [(visible)]="askApprovalNotes"
+    [style]="{ width: '550px' }"
+    header="{{ 'confirmation' | translate }}"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="filed">
+        <p>{{ "confirm_note" | translate }}</p>
+        <br />
+        <textarea
+          [(ngModel)]="approvalNotes"
+          placeholder="{{ 'reason_ph' | translate }}"
+          class="form-control rounded-0"
+          rows="5"
+        ></textarea>
+        <br />
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <br />
+      <div class="itg-fixed">
+        <button class="itgbg-approved" (click)="onRequestApprove()">
+          {{ "submit" | translate }}
+        </button>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [(visible)]="reqInfoDialog"
+    [style]="{ width: '550px' }"
+    header="{{ 'req_info_header' | translate }}"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="filed">
+        <p>
+          <span class="invalid-txt">*</span>{{ "req_info_desc" | translate }}
+        </p>
+        <br />
+        <textarea
+          [(ngModel)]="requestInformation"
+          placeholder="{{ 'req_info_ph' | translate }}"
+          class="form-control rounded-0"
+          rows="5"
+        ></textarea>
+        <br />
+        <small
+          *ngIf="showModalValidation && !requestInformation"
+          class="invalid-txt"
+          >{{ modalValidationMsg }}</small
+        >
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <!-- <p-progressBar *ngIf="submitted" mode="indeterminate" [style]="{'height': '5px','background':'#1a66cc'}">
+    </p-progressBar> -->
+      <br />
+      <!-- <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button> -->
+      <button
+        pRipple
+        icon="pi pi-check"
+        class="btn btn-secondary rounded-0"
+        (click)="onRequestInformation()"
+      >
+        {{ "submit" | translate }}
+      </button>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [(visible)]="delegateInfoDialog"
+    [style]="{ width: '550px' }"
+    header="{{ 'delegate_info_header' | translate }}"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="filed">
+        <p>
+          <span class="invalid-txt">*</span
+          >{{ "delegate_info_desc" | translate }}
+        </p>
+        <br />
+        <textarea
+          [(ngModel)]="delegateInformation"
+          placeholder="{{ 'delegate_info_ph' | translate }}"
+          class="form-control rounded-0"
+          rows="5"
+        ></textarea>
+        <br />
+        <small
+          *ngIf="showModalValidation && !delegateInformation"
+          class="invalid-txt"
+          >{{ modalValidationMsg }}</small
+        >
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <!-- <p-progressBar *ngIf="submitted" mode="indeterminate" [style]="{'height': '5px','background':'#1a66cc'}">
+    </p-progressBar> -->
+      <br />
+      <!-- <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button> -->
+      <button
+        pRipple
+        icon="pi pi-check"
+        class="btn btn-secondary rounded-0"
+        (click)="onDelegate()"
+      >
+        {{ "submit" | translate }}
+      </button>
+    </ng-template>
+  </p-dialog>
+
+  <p-dialog
+    [(visible)]="askRequestAnswer"
+    [style]="{ width: '650px' }"
+    header="{{ 'ans_btn_txt' | translate }}"
+    [modal]="true"
+    styleClass="p-fluid"
+  >
+    <ng-template pTemplate="content">
+      <div class="filed">
+        <p>
+          <span class="invalid-txt">*</span>
+          {{ "ans_statement" | translate }}
+        </p>
+        <!-- <p><Strong>{{'question_heading' | translate}}:</Strong> {{requestInfo?.requestInfoQuestion}}</p> -->
+        <textarea
+          [(ngModel)]="reqAnswer"
+          placeholder="write your answer..."
+          class="form-control rounded-0"
+          rows="5"
+        ></textarea>
+
+        <small *ngIf="showModalValidation && !reqAnswer" class="invalid-txt">{{
+          modalValidationMsg
+        }}</small>
+
+        <div
+          class="col-xxl-12 col-md-12 itm-pos-rel itm-input-staff mb-4 date-calendar file-upload"
+        >
+          <label for="invoice" class="form-label"> Attachments </label> <br />
+
+          <p-fileUpload
+            #fileInput
+            [multiple]="true"
+            [customUpload]="true"
+            (uploadHandler)="onFileUpload($event, 'answer')"
+            (onSelect)="onFileUpload($event, 'answer')"
+            [showUploadButton]="false"
+            [showCancelButton]="false"
+            chooseLabel="{{ 'choose_new' | translate }}"
+            uploadLabel="{{ 'upload' | translate }}"
+            accept=".pdf,.png,.jpg,.jpeg,.xls,.doc,.docx"
+          >
+            <ng-template pTemplate="content">
+              <div *ngIf="answerAttachments?.length">
+                <Strong>{{ "current_files" | translate }}</Strong> <br />
+
+                <ng-container *ngFor="let file of answerAttachments">
+                  <span [innerHTML]="getSingleAttachmentInfo(file)"></span>
+                  <i
+                    class="pi pi-trash rem-file"
+                    (click)="onDeleteFile(file, 'answer')"
+                  ></i>
+                  <hr />
+                </ng-container>
+              </div>
+            </ng-template>
+          </p-fileUpload>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <!-- <p-progressBar *ngIf="submitted" mode="indeterminate" [style]="{'height': '5px','background':'#1a66cc'}">
+    </p-progressBar> -->
+      <br />
+
+      <!-- <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button> -->
+      <div class="itg-fixed">
+        <button
+          class="itgbg-approved"
+          type="button"
+          [ngStyle]="{ 'pointer-events': submitted ? 'none' : null }"
+          (click)="onAnswerSubmit()"
+        >
+          {{ "submit_ans_btn_txt" | translate }}
+        </button>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <app-request-history
+    *ngIf="showRequestHistory"
+    [historyData]="requestHistory"
+    (onHistoryBarClose)="onHistorySideClose($event)"
+  ></app-request-history>
+
+  <!-- Dialog Modal section ends -->
+</div>
